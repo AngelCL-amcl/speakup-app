@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SpeakUp – Inglés hablando</title>
+<meta name="theme-color" content="#22b573">
+<meta name="apple-mobile-web-app-title" content="SpeakUp">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff8ef; --card:#ffffff; --ink:#2b2a33; --muted:#7a7684; --line:#efe6da;
+  --green:#22b573; --green-d:#169159; --red:#f0544f; --red-d:#c93c37;
+  --blue:#3b82f6; --blue-d:#2563c9; --yellow:#ffc531; --yellow-d:#d9a400; --purple:#8b5cf6; --purple-d:#6d3fd6;
+  --orange:#ff8a3d; --orange-d:#e06a1c; --gray:#d9d3c9; --gray-d:#bdb5a8;
+  --soft-green:#e6f8ef; --soft-red:#fdeceb; --soft-blue:#e9f1ff; --soft-yellow:#fff4d6; --soft-purple:#f1ebff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;overflow-x:hidden;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-size:17px;line-height:1.45}
+.wrap{max-width:560px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) 16px 110px}
+.hidden{display:none!important}
+
+/* header stats */
+.stats{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.logo{font-weight:900;font-size:24px;margin-right:auto}
+.logo span{color:var(--green)}
+.logo .appicon{display:inline-flex}
+.chip{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:5px 10px;font-weight:900;font-size:16px}
+.goal{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.goal .pbar{flex:1}
+.pbar{height:14px;background:var(--line);border-radius:99px;overflow:hidden}
+.pbar>div{height:100%;background:var(--green);border-radius:99px;transition:width .4s}
+
+/* bottom nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);display:flex;justify-content:center;z-index:10}
+nav .in{display:flex;max-width:560px;width:100%}
+nav button{flex:1;border:0;background:none;padding:10px 4px calc(14px + env(safe-area-inset-bottom));font:800 13px Nunito;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button span{font-size:26px;filter:grayscale(1);opacity:.6}
+nav button.on{color:var(--blue)}
+nav button.on span{filter:none;opacity:1}
+
+/* path */
+.level{margin:6px 0 4px;border-radius:20px;padding:14px 16px;color:#fff;font-weight:900}
+.level small{display:block;font-weight:700;opacity:.9}
+.level.locked{background:var(--gray)!important;color:#fff}
+.unitname{font-weight:900;color:var(--muted);text-align:center;margin:20px 0 34px;font-size:15px;text-transform:uppercase;letter-spacing:.5px}
+.path{display:flex;flex-direction:column;align-items:center;gap:14px;padding:4px 0}
+.node{width:76px;height:70px;border-radius:50%;border:0;font-size:30px;cursor:pointer;color:#fff;position:relative;transition:transform .1s}
+.node:active{transform:translateY(4px)}
+.node.done{background:var(--yellow);box-shadow:0 7px 0 var(--yellow-d)}
+.node.open{background:var(--green);box-shadow:0 7px 0 var(--green-d);animation:bob 1.6s ease-in-out infinite}
+.node.locked{background:var(--gray);box-shadow:0 7px 0 var(--gray-d);cursor:not-allowed}
+.node .lbl{position:absolute;top:50%;transform:translateY(-50%);left:90px;white-space:nowrap;color:var(--ink);font-size:14px;font-weight:800;text-align:left}
+.node.r .lbl{left:auto;right:90px;text-align:right}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.start-tag{position:absolute;top:-34px;left:50%;transform:translateX(-50%);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:2px 8px;font-size:13px;color:var(--green-d);font-weight:900}
+
+/* generic */
+h2{font-size:24px;font-weight:900;margin:4px 0 6px}
+.sub{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 4px 0 var(--line)}
+.big{display:flex;align-items:center;gap:14px;width:100%;border:2px solid var(--line);background:var(--card);border-radius:20px;padding:14px;margin-bottom:12px;cursor:pointer;text-align:left;font:inherit;color:var(--ink);line-height:1.35;box-shadow:0 4px 0 var(--line)}
+.big:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.big .ico{font-size:32px;width:56px;height:56px;display:grid;place-items:center;border-radius:16px;flex:none}
+.big b{font-size:18px;display:block}
+.big small{color:var(--muted);font-size:14px}
+.big .right{margin-left:auto;font-weight:900;color:var(--muted);font-size:14px;white-space:nowrap}
+.btn{font:800 17px Nunito;border:0;border-radius:16px;padding:14px 18px;cursor:pointer;color:#fff;background:var(--green);box-shadow:0 4px 0 var(--green-d)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--green-d)}
+.btn.blue{background:var(--blue);box-shadow:0 4px 0 var(--blue-d)}
+.btn.white{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn.full{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.x{border:0;background:none;font-size:26px;cursor:pointer;color:var(--muted);padding:0 6px}
+.top .pbar{flex:1}
+.notice{background:var(--soft-yellow);border-radius:16px;padding:12px 14px;font-size:15px;margin-bottom:14px;display:none}
+
+/* exercise */
+.step{font-size:14px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.en-big{font-size:30px;font-weight:900;line-height:1.2;margin:8px 0}
+.es-big{font-size:18px;color:var(--muted);margin-bottom:12px}
+.phon{display:inline-block;background:var(--soft-yellow);border-radius:12px;padding:6px 12px;font-weight:800;margin-bottom:14px}
+.phon small{font-weight:600;color:var(--muted)}
+.speaker{width:72px;height:72px;border-radius:22px;border:0;background:var(--blue);color:#fff;font-size:32px;cursor:pointer;box-shadow:0 5px 0 var(--blue-d);flex:none}
+.speaker.slow{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:0 5px 0 var(--line);font-size:28px}
+.speaker.huge{width:120px;height:120px;font-size:52px;border-radius:32px}
+.speaker:active{transform:translateY(3px)}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.opt{border:2px solid var(--line);background:var(--card);border-radius:16px;padding:14px;font:800 18px Nunito;cursor:pointer;box-shadow:0 4px 0 var(--line);text-align:left;color:var(--ink)}
+.opt.good{background:var(--soft-green);border-color:var(--green);color:var(--green-d)}
+.opt.bad{background:var(--soft-red);border-color:var(--red);color:var(--red-d)}
+.emojis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.emojis .opt{font-size:56px;text-align:center;padding:16px 0}
+.bigemoji{font-size:90px;text-align:center;line-height:1.1}
+
+.micwrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:20px}
+.mic{width:106px;height:106px;border-radius:50%;border:0;background:var(--red);color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 6px 0 var(--red-d)}
+.mic svg{width:44px;height:44px}
+.mic.live{animation:pulse 1.1s infinite;background:#ff3b30}
+.mic:disabled{opacity:.4;cursor:not-allowed}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(240,84,79,.55),0 6px 0 var(--red-d)}100%{box-shadow:0 0 0 26px rgba(240,84,79,0),0 6px 0 var(--red-d)}}
+.mic-label{font-weight:800;text-align:center}
+.live-text{color:var(--muted);font-style:italic;min-height:24px;text-align:center}
+
+.result{margin-top:16px;border-radius:22px;padding:18px}
+.result.good{background:var(--soft-green)}.result.mid{background:var(--soft-yellow)}.result.bad{background:var(--soft-red)}
+.verdict{font-size:22px;font-weight:900;display:flex;align-items:center;gap:8px}
+.words{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;font-size:21px}
+.w{padding:3px 10px;border-radius:10px;font-weight:800;background:#fff}
+.w.ok{color:var(--green-d)}
+.w.no{color:var(--red-d);text-decoration:underline wavy;cursor:pointer}
+.heard{font-size:15px;color:var(--muted)}
+.err{background:#fff;border-radius:14px;padding:10px 12px;margin-top:8px;display:flex;align-items:center;gap:10px}
+.err .xx{color:var(--red-d);font-weight:800;text-decoration:line-through}
+.err .v{color:var(--green-d);font-weight:900}
+.err button{margin-left:auto;border:0;background:var(--soft-blue);border-radius:10px;padding:8px 10px;cursor:pointer;font-size:16px;flex:none}
+.tip{background:#fff;border-radius:14px;padding:12px;margin-top:10px;font-size:16px;white-space:pre-wrap}
+.tip b{display:block;margin-bottom:4px}
+.xpgain{color:var(--yellow-d);font-weight:900}
+
+/* chat */
+.chat{display:flex;flex-direction:column;gap:12px;margin:8px 0 10px}
+.msg{padding:14px;border-radius:20px;max-width:92%}
+.msg.t{background:var(--card);border:2px solid var(--line);align-self:flex-start;border-bottom-left-radius:6px}
+.msg.m{background:var(--soft-blue);align-self:flex-end;border-bottom-right-radius:6px}
+.msg .who{font-size:13px;font-weight:900;color:var(--muted);margin-bottom:4px}
+.msg .en{font-size:19px;font-weight:800}
+.msg .es{font-size:15px;color:var(--muted);margin-top:4px}
+.say{border:0;background:var(--soft-blue);border-radius:10px;padding:4px 9px;cursor:pointer;font-size:15px;margin-left:4px;vertical-align:2px}
+.suggest{background:var(--soft-yellow);border-radius:16px;padding:12px 14px;align-self:stretch}
+.suggest .lbl{font-size:13px;font-weight:900;color:#a77a00;text-transform:uppercase}
+.fixbox{margin-top:10px;background:var(--soft-red);border-radius:14px;padding:10px 12px;font-size:15px}
+.fixbox.ok{background:var(--soft-green)}
+.labpanel{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:10px;position:sticky;top:0;z-index:5}
+.labpanel .lbl{font-size:13px;font-weight:900;color:var(--purple);text-transform:uppercase}
+.goalrow{font-size:15px;font-weight:700;padding:2px 0;color:var(--muted)}
+.goalrow.ok{color:var(--green-d)}
+.msg.report{max-width:100%;align-self:stretch}
+.party{position:fixed;inset:0;z-index:100;background:rgba(43,42,51,.55);overflow:hidden;display:grid;place-items:center;padding:20px}
+.party.light{background:none;pointer-events:none}
+.balloon{position:absolute;bottom:-100px;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-60vh) rotate(8deg)}100%{transform:translateY(-125vh) rotate(-8deg)}}
+.conf{position:absolute;top:-24px;width:10px;height:16px;border-radius:2px;animation:fall linear forwards}
+.party:not(.light) .conf{animation-iteration-count:infinite}
+@keyframes fall{to{transform:translateY(112vh) rotate(760deg)}}
+.party-card{position:relative;z-index:2;background:var(--card);border-radius:28px;padding:26px;text-align:center;max-width:380px;width:100%;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.party-card .badge{font-size:84px;animation:wiggle 1.2s ease-in-out infinite}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+@keyframes wiggle{50%{transform:rotate(10deg) scale(1.08)}}
+.chathead{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.avatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:30px;flex:none}
+.online{color:var(--green-d);font-size:13px;font-weight:800}
+.sticky{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 22%);padding-top:22px}
+.spin{display:inline-block;width:16px;height:16px;border:3px solid var(--muted);border-top-color:transparent;border-radius:50%;animation:s 1s linear infinite;vertical-align:-3px}
+@keyframes s{to{transform:rotate(360deg)}}
+.done{text-align:center;padding:28px 10px}
+.done .emoji{font-size:72px}
+.bigstat{display:flex;gap:10px;margin:16px 0}
+.bigstat div{flex:1;border:2px solid var(--line);border-radius:16px;padding:10px;font-weight:900;font-size:22px}
+.bigstat small{display:block;font-size:13px;color:var(--muted)}
+.lessonmode .stats,.lessonmode .goal{display:none}
+body.lessonmode nav{display:none}
+body.lessonmode #notice{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stats" id="statsBar">
+    <div class="logo" style="display:flex;align-items:center;gap:8px"><span class="appicon"><svg width="34" height="34" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2fd187"/><stop offset="1" stop-color="#169159"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#g)"/><path d="M118 140h276a40 40 0 0 1 40 40v130a40 40 0 0 1-40 40H250l-78 62v-62h-54a40 40 0 0 1-40-40V180a40 40 0 0 1 40-40z" fill="#fff"/><rect x="226" y="176" width="60" height="104" rx="30" fill="#f0544f"/><path d="M196 248a60 60 0 0 0 120 0" fill="none" stroke="#f0544f" stroke-width="18" stroke-linecap="round"/><path d="M256 308v22" stroke="#f0544f" stroke-width="18" stroke-linecap="round"/><circle cx="404" cy="112" r="44" fill="#ffc531"/><path d="M404 88l7 15 16 2-12 11 3 16-14-8-14 8 3-16-12-11 16-2z" fill="#fff"/></svg>
+</span><b style="font-weight:900">Speak<span>Up</span></b></div>
+    <button class="chip" id="setBtn" style="cursor:pointer" title="Ajustes">⚙️</button>
+    <div class="chip" title="Racha de días">🔥 <span id="streak">0</span></div>
+    <div class="chip" title="Puntos XP">⭐ <span id="xp">0</span></div>
+  </div>
+  <div class="notice" id="notice"></div>
+
+  <!-- CAMINO -->
+  <section id="tab-path">
+    <div class="goal"><div style="font-weight:900">🎯 Meta de hoy</div><div class="pbar"><div id="goalFill" style="width:0"></div></div><div style="font-weight:900;color:var(--muted)" id="goalTxt">0/50</div></div>
+    <div id="pathList"></div>
+  </section>
+
+  <!-- PALABRAS (estilo Drops) -->
+  <section id="tab-words" class="hidden">
+    <h2>🧩 Palabras</h2>
+    <p class="sub">Juegos rápidos de 2 minutos con dibujos. Escucha, toca y dilo.</p>
+    <div id="wordCats"></div>
+  </section>
+
+  <!-- AMIGOS (estilo HelloTalk / Tandem) -->
+  <section id="tab-friends" class="hidden">
+    <h2>💬 Amigos para practicar</h2>
+    <p class="sub">Conversa por voz con personajes de IA. Te corrigen y te dan ideas de qué decir.</p>
+    <div style="font-weight:900;margin-bottom:6px">Tu nivel para conversar:</div>
+    <select id="chatLevel" style="font:800 16px Nunito;padding:12px;border-radius:14px;border:2px solid var(--line);background:var(--card);width:100%;margin-bottom:16px">
+      <option value="A1">A1 · Fácil</option><option value="A2">A2 · Intermedio</option><option value="B1">B1 · Normal</option><option value="B2">B2 · Difícil</option><option value="C1">C1 · Súper difícil</option></select>
+    <div id="friendList"></div>
+  </section>
+
+  <!-- PANTALLA DE EJERCICIO -->
+  <section id="play" class="hidden">
+    <div class="top"><button class="x" id="quit" aria-label="Salir">✕</button><div class="pbar"><div id="pfill" style="width:0"></div></div></div>
+    <div id="playBody"></div>
+  </section>
+
+  <!-- CHAT -->
+  <section id="chatView" class="hidden">
+    <div class="chathead"><button class="x" id="chatBack">←</button><div class="avatar" id="cAv"></div><div><b id="cName" style="font-size:18px"></b><div class="online" id="cSub"></div></div></div>
+    <div id="labPanel" class="labpanel hidden"></div>
+    <div class="chat" id="chat"></div>
+    <div class="sticky">
+      <div class="live-text" id="liveChat"></div>
+      <div class="micwrap" style="margin-top:6px">
+        <button class="mic" id="micChat" disabled aria-label="Hablar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z"/></svg></button>
+        <div class="mic-label" id="chatLabel">Toca para responder</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav id="nav"><div class="in">
+  <button class="on" data-tab="path"><span>🏠</span>Camino</button>
+  <button data-tab="words"><span>🧩</span>Palabras</button>
+  <button data-tab="friends"><span>💬</span>Amigos</button>
+</div></nav>
+
+<script>
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+const LEVELS=[
+ {name:"A1 · Fácil", desc:"Saludar, presentarte, números, comida y tu día", color:"#22b573", units:["saludos","yo","ayuda","numeros","comida","dia"]},
+ {name:"A2 · Intermedio", desc:"Preguntas, pasado, futuro, compras y doctor", color:"#3b82f6", units:["preguntas","sonidos","ayer","planes","compras","salud"]},
+ {name:"B1 · Normal", desc:"Trabajo, opiniones, experiencias, llamadas, viajes y casa", color:"#8b5cf6", units:["trabajo","opinion","experiencias","telefono","viajes","casa"]},
+ {name:"B2 · Difícil", desc:"Condicionales, debatir, phrasal verbs, clientes, IT y noticias", color:"#ff8a3d", units:["condicional","debate","phrasal","clientes","tecnologia","noticias"]},
+ {name:"C1 · Súper difícil", desc:"Expresiones nativas, entrevistas, matices, negociar, humor y trabalenguas", color:"#f0544f", units:["idioms","entrevista","matices","negociar","humor","trabalenguas"]}
+];
+const UNITS={
+ saludos:{ico:"👋",name:"Saludos",phrases:[
+  ["Hello","Hola","je-LÓU"],["Hi, how are you?","Hola, ¿cómo estás?","jái, jáu ar iú"],
+  ["I am fine, thank you","Estoy bien, gracias","ái am fáin, zénk iú"],["Good morning","Buenos días","gud MÓR-ning"],
+  ["Good afternoon","Buenas tardes","gud af-ter-NÚN"],["Good night","Buenas noches","gud náit"],
+  ["Nice to meet you","Mucho gusto","náis tu mít iú"],["See you later","Nos vemos luego","sí iú LÉI-ter"],
+  ["Have a nice day","Que tengas un buen día","jav a náis déi"],["Thank you very much","Muchas gracias","zénk iú VÉ-ri mach"],
+  ["You are welcome","De nada","iú ar UÉL-kam"],["Excuse me","Disculpe / con permiso","ex-KIÚS mi"]]},
+ yo:{ico:"🙋",name:"Presentarme",phrases:[
+  ["My name is Angel","Me llamo Angel","mái néim is ÉIN-yel"],["What is your name?","¿Cómo te llamas?","uát is iór néim"],
+  ["I live in Bozeman","Vivo en Bozeman","ái liv in BÓUS-man"],["Where are you from?","¿De dónde eres?","uér ar iú from"],
+  ["I am a student","Soy estudiante","ái am a STIÚ-dent"],["I work in a restaurant","Trabajo en un restaurante","ái uérk in a RÉS-ta-rant"],
+  ["I speak Spanish","Hablo español","ái spík SPÁ-nish"],["I am learning English","Estoy aprendiendo inglés","ái am LÉR-ning ÍN-glish"],
+  ["What do you do?","¿A qué te dedicas?","uát du iú du"],["I like music","Me gusta la música","ái láik MIÚ-sik"],
+  ["I have a wife","Tengo esposa","ái jav a uáif"],["Nice talking to you","Un gusto hablar contigo","náis TÓ-king tu iú"]]},
+ ayuda:{ico:"🆘",name:"Frases para sobrevivir",phrases:[
+  ["I don't understand","No entiendo","ái dóunt an-der-STÁND"],["Can you repeat that, please?","¿Puede repetir, por favor?","kan iú ri-PÍT dat, plís"],
+  ["Can you speak slowly, please?","¿Puede hablar despacio, por favor?","kan iú spík SLÓU-li, plís"],["What does that mean?","¿Qué significa eso?","uát das dat mín"],
+  ["How do you say this in English?","¿Cómo se dice esto en inglés?","jáu du iú séi dis in ÍN-glish"],["Sorry, my English is not very good","Perdón, mi inglés no es muy bueno","SÓ-ri, mái ÍN-glish is not VÉ-ri gud"],
+  ["Can you help me?","¿Me puede ayudar?","kan iú jelp mi"],["Where is the bathroom?","¿Dónde está el baño?","uér is de BÁZ-rum"],
+  ["I have a question","Tengo una pregunta","ái jav a KUÉS-chon"],["One moment, please","Un momento, por favor","uán MÓU-ment, plís"],
+  ["Yes, I understand","Sí, entiendo","iés, ái an-der-STÁND"],["No problem","No hay problema","nóu PRÓ-blem"]]},
+ numeros:{ico:"🔢",name:"Números, hora y dinero",phrases:[
+  ["One, two, three, four, five","Uno, dos, tres, cuatro, cinco","uán, tu, zri, for, fáiv"],["Six, seven, eight, nine, ten","Seis, siete, ocho, nueve, diez","six, SÉ-ven, éit, náin, ten"],
+  ["What time is it?","¿Qué hora es?","uát táim is it"],["It is three o'clock","Son las tres","it is zri o-KLÓK"],
+  ["How much is it?","¿Cuánto cuesta?","jáu mach is it"],["It is twenty dollars","Son veinte dólares","it is TUÉN-ti DÓ-lars"],
+  ["Today is Friday","Hoy es viernes","tu-DÉI is FRÁI-dei"],["See you on Monday","Nos vemos el lunes","sí iú on MÁN-dei"],
+  ["I work at five","Trabajo a las cinco","ái uérk at fáiv"],["I am thirty years old","Tengo treinta años","ái am ZÉR-ti iírs óuld"],
+  ["My birthday is in May","Mi cumpleaños es en mayo","mái BÉRZ-dei is in méi"],["It is half past two","Son las dos y media","it is jaf past tu"]]},
+ comida:{ico:"🍽️",name:"Comida y restaurante",phrases:[
+  ["I am hungry","Tengo hambre","ái am JÁN-gri"],["Water, please","Agua, por favor","UÓ-ter, plís"],
+  ["Welcome! How many people?","¡Bienvenidos! ¿Cuántas personas?","UÉL-kam! jáu MÉ-ni PÍ-pol"],["Are you ready to order?","¿Están listos para ordenar?","ar iú RÉ-di tu ÓR-der"],
+  ["Would you like something to drink?","¿Desea algo de tomar?","ud iú láik SÁM-zing tu drink"],["Is it spicy?","¿Es picante?","is it SPÁI-si"],
+  ["I would like chicken and rice","Quisiera pollo con arroz","ái ud láik CHÍ-ken and ráis"],["The check, please","La cuenta, por favor","de chek, plís"],
+  ["Enjoy your meal","Buen provecho","en-YÓI iór mil"],["Thank you, come again","Gracias, vuelvan pronto","zénk iú, kam a-GUÉN"],
+  ["It is delicious","Está delicioso","it is de-LÍ-shos"],["Can I have a box?","¿Me da una caja para llevar?","kan ái jav a box"]]},
+ dia:{ico:"🏠",name:"Mi día",phrases:[
+  ["I am tired","Estoy cansado","ái am TÁI-erd"],["I am going to work","Voy al trabajo","ái am GÓ-ing tu uérk"],
+  ["It is cold today","Hace frío hoy","it is kóuld tu-DÉI"],["I need to go to the store","Necesito ir a la tienda","ái nid tu góu tu de stor"],
+  ["Where is the bus stop?","¿Dónde está la parada del bus?","uér is de bas stop"],["I am going home","Me voy a casa","ái am GÓ-ing jóum"],
+  ["What are you doing?","¿Qué estás haciendo?","uát ar iú DÚ-ing"],["I like it","Me gusta","ái láik it"],
+  ["I don't like it","No me gusta","ái dóunt láik it"],["Let's go","Vámonos","lets góu"],
+  ["I will call you later","Te llamo más tarde","ái uíl kol iú LÉI-ter"],["I wake up at seven","Me despierto a las siete","ái uéik ap at SÉ-ven"]]},
+ preguntas:{ico:"❓",name:"Hacer preguntas",phrases:[
+  ["Where do you live?","¿Dónde vives?","uér du iú liv"],["What do you like to do?","¿Qué te gusta hacer?","uát du iú láik tu du"],
+  ["How was your day?","¿Cómo estuvo tu día?","jáu uás iór déi"],["What time do you work?","¿A qué hora trabajas?","uát táim du iú uérk"],
+  ["Do you have kids?","¿Tienes hijos?","du iú jav kids"],["Who is that?","¿Quién es esa persona?","ju is dat"],
+  ["Why are you sad?","¿Por qué estás triste?","uái ar iú sad"],["Which one do you want?","¿Cuál quieres?","uích uán du iú uánt"],
+  ["Can I ask you something?","¿Te puedo preguntar algo?","kan ái ask iú SÁM-zing"],["Are you busy?","¿Estás ocupado?","ar iú BÍ-si"],
+  ["Do you want to come?","¿Quieres venir?","du iú uánt tu kam"],["What is your favorite food?","¿Cuál es tu comida favorita?","uát is iór FÉI-vo-rit fud"]]},
+ sonidos:{ico:"👅",name:"Sonidos difíciles",phrases:[
+  ["Thank you","Gracias  (TH: lengua entre los dientes)","zénk iú"],["I think so","Creo que sí","ái zink sóu"],
+  ["Three thousand","Tres mil","zri ZÁU-sand"],["This and that","Esto y aquello  (TH suave, como 'd' con la lengua afuera)","dis and dat"],
+  ["Very good","Muy bien  (V: dientes en el labio de abajo)","VÉ-ri gud"],["I have a van","Tengo una camioneta","ái jav a van"],
+  ["She is my friend","Ella es mi amiga  (SH: como pidiendo silencio)","shi is mái frend"],["Watch and wash","Mirar y lavar  (CH vs SH)","uóch and uósh"],
+  ["Sit in the seat","Siéntate en el asiento  (i corta vs i larga)","sit in de siit"],["Live and leave","Vivir e irse","liv and liiv"],
+  ["The ship and the sheep","El barco y la oveja","de ship and de shiip"],["It is hot","Hace calor  (la H suena como J suave)","it is jot"]]},
+ ayer:{ico:"⏪",name:"Ayer (pasado)",phrases:[
+  ["Yesterday I worked","Ayer trabajé","IÉS-ter-dei ái uérkt"],["I went to the store","Fui a la tienda","ái uent tu de stor"],
+  ["I ate pizza","Comí pizza","ái éit PÍT-sa"],["I was tired","Estaba cansado","ái uás TÁI-erd"],
+  ["Did you sleep well?","¿Dormiste bien?","did iú slip uel"],["I watched a movie","Vi una película","ái uácht a MÚ-vi"],
+  ["I talked to my friend","Hablé con mi amigo","ái tókt tu mái frend"],["It was fun","Fue divertido","it uás fan"],
+  ["I didn't go","No fui","ái DÍ-dent góu"],["What did you do?","¿Qué hiciste?","uát did iú du"],
+  ["I stayed home","Me quedé en casa","ái stéid jóum"],["We had a good time","La pasamos bien","uí jad a gud táim"]]},
+ planes:{ico:"⏩",name:"Planes y futuro",phrases:[
+  ["Tomorrow I am going to work","Mañana voy a trabajar","tu-MÓ-rou ái am GÓ-ing tu uérk"],["I want to learn English","Quiero aprender inglés","ái uánt tu lern ÍN-glish"],
+  ["I am going to cook","Voy a cocinar","ái am GÓ-ing tu kuk"],["What are you going to do?","¿Qué vas a hacer?","uát ar iú GÓ-ing tu du"],
+  ["Next week I have a test","La próxima semana tengo un examen","next uík ái jav a test"],["I will see you tomorrow","Te veo mañana","ái uíl sí iú tu-MÓ-rou"],
+  ["Let's meet on Saturday","Veámonos el sábado","lets mit on SÁ-ter-dei"],["I need to study","Necesito estudiar","ái nid tu STÁ-di"],
+  ["Maybe later","Tal vez más tarde","MÉI-bi LÉI-ter"],["I hope so","Ojalá","ái jóup sóu"],
+  ["I am going to travel","Voy a viajar","ái am GÓ-ing tu TRÁ-vel"],["See you soon","Nos vemos pronto","sí iú sun"]]},
+ compras:{ico:"🛒",name:"De compras",phrases:[
+  ["How much does this cost?","¿Cuánto cuesta esto?","jáu mach das dis kost"],["Do you have this in a bigger size?","¿Tiene esto en una talla más grande?","du iú jav dis in a BÍ-guer sáis"],
+  ["Can I pay with a card?","¿Puedo pagar con tarjeta?","kan ái péi uíz a kard"],["I am just looking, thanks","Solo estoy mirando, gracias","ái am yast LÚ-king, zenks"],
+  ["Where can I find the milk?","¿Dónde encuentro la leche?","uér kan ái fáind de milk"],["It is too expensive","Está muy caro","it is tu ex-PÉN-siv"],
+  ["I would like to return this","Quisiera devolver esto","ái ud láik tu ri-TÉRN dis"],["Do you need a bag?","¿Necesita bolsa?","du iú nid a bag"]]},
+ salud:{ico:"🩺",name:"En el doctor",phrases:[
+  ["I don't feel well","No me siento bien","ái dóunt fiil uel"],["I have a headache","Me duele la cabeza","ái jav a JÉD-eik"],
+  ["My stomach hurts","Me duele el estómago","mái STÁ-mak jerts"],["I need to see a doctor","Necesito ver a un doctor","ái nid tu sí a DÓK-tor"],
+  ["I have had a fever since yesterday","Tengo fiebre desde ayer","ái jav jad a FÍ-ver sins IÉS-ter-dei"],["Do I need a prescription?","¿Necesito receta?","du ái nid a pres-KRÍP-shon"],
+  ["How often should I take it?","¿Cada cuánto lo tomo?","jáu Ó-fen shud ái téik it"],["I am allergic to penicillin","Soy alérgico a la penicilina","ái am a-LÉR-yik tu pe-ni-SÍ-lin"]]},
+ trabajo:{ico:"💼",name:"En el trabajo",phrases:[
+  ["I have been working here for two years","He trabajado aquí por dos años","ái jav bin UÉR-king jir for tu iírs"],["Could you send me the schedule, please?","¿Me podrías mandar el horario, por favor?","kud iú send mi de SKÉ-yul, plís"],
+  ["I can cover your shift on Saturday","Puedo cubrir tu turno el sábado","ái kan KÁ-ver iór shift on SÁ-ter-dei"],["I am running a little late","Voy a llegar un poco tarde","ái am RÁ-ning a LÍ-tel léit"],
+  ["Let me check and get back to you","Déjame revisar y te aviso","let mi chek and guet bak tu iú"],["What are my responsibilities?","¿Cuáles son mis responsabilidades?","uát ar mái ris-pon-si-BÍ-li-tis"],
+  ["I would like to ask for a day off","Quisiera pedir un día libre","ái ud láik tu ask for a déi of"],["Thanks for your help today","Gracias por tu ayuda hoy","zenks for iór jelp tu-DÉI"]]},
+ opinion:{ico:"💭",name:"Dar tu opinión",phrases:[
+  ["In my opinion, it is a good idea","En mi opinión, es buena idea","in mái o-PÍ-nion, it is a gud ai-DÍ-a"],["I agree with you","Estoy de acuerdo contigo","ái a-GRÍ uíz iú"],
+  ["I don't think so, because it is expensive","No creo, porque es caro","ái dóunt zink sóu, bi-KÓS it is ex-PÉN-siv"],["I prefer living in a small town","Prefiero vivir en un pueblo pequeño","ái pri-FÉR LÍ-ving in a smol táun"],
+  ["That makes sense","Tiene sentido","dat méiks sens"],["It depends on the situation","Depende de la situación","it di-PÉNDS on de si-chu-ÉI-shon"],
+  ["What do you think about it?","¿Qué piensas de eso?","uát du iú zink a-BÁUT it"],["I see your point, but I disagree","Entiendo tu punto, pero no estoy de acuerdo","ái sí iór póint, bat ái dis-a-GRÍ"]]},
+ experiencias:{ico:"🌎",name:"Experiencias",phrases:[
+  ["Have you ever been to New York?","¿Alguna vez has ido a Nueva York?","jav iú É-ver bin tu niú iork"],["I have never seen snow like this","Nunca he visto nieve así","ái jav NÉ-ver sín snóu láik dis"],
+  ["I have already eaten, thank you","Ya comí, gracias","ái jav ol-RÉ-di Í-ten, zénk iú"],["She has lived here for five years","Ella vive aquí desde hace cinco años","shi jas livd jir for fáiv iírs"],
+  ["I haven't finished my homework yet","Todavía no termino mi tarea","ái JÁ-vent FÍ-nisht mái JÓUM-uerk iet"],["It was the best day of my life","Fue el mejor día de mi vida","it uás de best déi ov mái láif"],
+  ["When I was a child, I lived near the ocean","Cuando era niño, vivía cerca del mar","uén ái uás a cháild, ái livd nir de ÓU-shan"],["How long have you studied English?","¿Cuánto tiempo has estudiado inglés?","jáu long jav iú STÁ-did ÍN-glish"]]},
+ telefono:{ico:"📞",name:"Llamadas por teléfono",phrases:[
+  ["Hello, this is Angel speaking","Hola, habla Angel","je-LÓU, dis is ÉIN-yel SPÍ-king"],["Could I speak to the manager, please?","¿Podría hablar con el gerente, por favor?","kud ái spík tu de MÁ-na-yer, plís"],
+  ["Sorry, you are breaking up","Perdón, se está cortando la llamada","SÓ-ri, iú ar BRÉI-king ap"],["Can I leave a message?","¿Puedo dejar un mensaje?","kan ái liiv a MÉ-sech"],
+  ["I am calling about my appointment","Llamo por mi cita","ái am KÓ-ling a-BÁUT mái a-PÓINT-ment"],["Could you spell that for me?","¿Me lo puede deletrear?","kud iú spel dat for mi"],
+  ["I will call you back in five minutes","Te llamo en cinco minutos","ái uíl kol iú bak in fáiv MÍ-nits"],["Thanks for calling, have a good one","Gracias por llamar, que estés bien","zenks for KÓ-ling, jav a gud uán"]]},
+ condicional:{ico:"🔀",name:"Si… (condicionales)",phrases:[
+  ["If I had more time, I would travel more","Si tuviera más tiempo, viajaría más","Clave: ái UD = I would · TRÁ-vel"],["If it rains tomorrow, we will stay home","Si llueve mañana, nos quedamos en casa","Clave: réins · uíl stéi"],
+  ["I would have called you if I had known","Te habría llamado si hubiera sabido","Clave: UD-ov (would have) · nóun"],["Unless you hurry, you will miss the bus","A menos que te apures, perderás el bus","Clave: an-LÉS · JÁ-ri"],
+  ["If I were you, I would take the job","Yo que tú, aceptaría el trabajo","Clave: if ái uér iú"],["What would you do if you won the lottery?","¿Qué harías si te ganaras la lotería?","Clave: uán (won) · LÓ-te-ri"],
+  ["As long as you practice, you will improve","Mientras practiques, vas a mejorar","Clave: PRÁK-tis · im-PRÚV"],["I wish I had studied harder","Ojalá hubiera estudiado más","Clave: uísh · STÁ-did · JÁR-der"]]},
+ debate:{ico:"⚖️",name:"Argumentar y debatir",phrases:[
+  ["On the one hand it is cheaper, but on the other hand it is slower","Por un lado es más barato, pero por otro es más lento","Clave: CHÍ-per · SLÓU-er"],["The main reason is that it saves time","La razón principal es que ahorra tiempo","Clave: RÍ-son · séivs"],
+  ["I am not entirely convinced by that argument","No me convence del todo ese argumento","Clave: en-TÁI-er-li · kon-VÍNST · ÁR-guiu-ment"],["That is a fair point, however I see it differently","Es un punto válido, pero lo veo diferente","Clave: fer · jau-É-ver · DÍ-fe-rent-li"],
+  ["It is worth considering the long term effects","Vale la pena considerar los efectos a largo plazo","Clave: uérz · kon-SÍ-de-ring · i-FÉKTS"],["Let me put it another way","Déjame decirlo de otra forma","Clave: a-NÁ-der uéi"],
+  ["To be honest, I have mixed feelings about it","Para ser honesto, tengo sentimientos encontrados","Clave: Ó-nest (la h no suena) · mikst"],["Overall, the benefits outweigh the risks","En general, los beneficios superan los riesgos","Clave: óu-ver-ÓL · BÉ-ne-fits · aut-UÉI"]]},
+ phrasal:{ico:"🧲",name:"Phrasal verbs",phrases:[
+  ["Can you pick me up after work?","¿Me recoges después del trabajo?","Clave: pik mi ap"],["I need to figure out what went wrong","Necesito averiguar qué salió mal","Clave: FÍ-guiur áut · rong"],
+  ["Don't give up, you are getting better","No te rindas, estás mejorando","Clave: guiv ap · GUÉ-ting"],["We ran out of rice, so I will buy some","Se nos acabó el arroz, voy a comprar","Clave: ran áut ov"],
+  ["Could you look into this problem?","¿Podrías revisar este problema?","Clave: luk ÍN-tu"],["I am looking forward to seeing you","Tengo muchas ganas de verte","Clave: LÚ-king FÓR-uord"],
+  ["Let's catch up this weekend","Pongámonos al día este fin de semana","Clave: kach ap · UÍK-end"],["The meeting was put off until Friday","La reunión se pospuso hasta el viernes","Clave: put of · an-TÍL"]]},
+ clientes:{ico:"🤝",name:"Resolver problemas con clientes",phrases:[
+  ["I am so sorry for the wait, we are short staffed tonight","Perdón por la espera, hoy nos falta personal","Clave: short staft · tu-NÁIT"],["Let me talk to the kitchen and see what I can do","Déjeme hablar con la cocina y ver qué puedo hacer","Clave: KÍ-chen"],
+  ["I completely understand your frustration","Entiendo completamente su frustración","Clave: kom-PLÍT-li · fras-TRÉI-shon"],["Would you like me to bring you something else instead?","¿Quiere que le traiga otra cosa en su lugar?","Clave: in-STÉD"],
+  ["I will take that off your bill","Se lo quito de la cuenta","Clave: téik dat of"],["Unfortunately, we are fully booked tonight","Desafortunadamente, hoy estamos llenos","Clave: an-FÓR-chu-net-li · bukt"],
+  ["Is there anything else I can do to make it right?","¿Hay algo más que pueda hacer para arreglarlo?","Clave: É-ni-zing · ráit"],["Thank you for your patience","Gracias por su paciencia","Clave: PÉI-shens"]]},
+ idioms:{ico:"🗽",name:"Expresiones nativas",phrases:[
+  ["It is not rocket science","No es tan complicado","Clave: RÓ-ket SÁI-ens"],["Let's call it a day","Dejémoslo por hoy","Clave: kol it a déi"],
+  ["I am on the fence about it","Estoy indeciso","Clave: fens"],["That ship has sailed","Esa oportunidad ya pasó","Clave: ship (i corta) · séild"],
+  ["She hit the nail on the head","Ella dio en el clavo","Clave: néil · jed"],["We are back to square one","Volvemos al punto de partida","Clave: skuér uán"],
+  ["It cost an arm and a leg","Costó un ojo de la cara","Clave: arm · leg"],["Don't beat around the bush","No te andes con rodeos","Clave: biit · bush (u corta)"]]},
+ entrevista:{ico:"🎤",name:"Entrevista profesional",phrases:[
+  ["I thrive in fast paced environments where I can solve problems","Me desempeño bien en ambientes rápidos donde puedo resolver problemas","Clave: zráiv · peist · en-VÁI-ron-ments"],["One of my greatest strengths is staying calm under pressure","Una de mis mayores fortalezas es mantener la calma bajo presión","Clave: strengzs · kaam · PRÉ-sher"],
+  ["I am particularly interested in incident response and threat analysis","Me interesa especialmente la respuesta a incidentes y el análisis de amenazas","Clave: par-TÍ-kiu-lar-li · zret · a-NÁ-li-sis"],["In my previous role, I was responsible for troubleshooting customer issues","En mi puesto anterior, era responsable de resolver problemas de clientes","Clave: PRÍ-vi-os · TRÁ-bol-shu-ting · Í-shus"],
+  ["I am eager to keep developing my skills in network security","Tengo muchas ganas de seguir desarrollando mis habilidades en seguridad de redes","Clave: Í-guer · di-VÉ-lo-ping · si-KIÚ-ri-ti"],["Could you elaborate on what a typical day looks like in this role?","¿Podría explicar cómo es un día típico en este puesto?","Clave: i-LÁ-bo-reit · TÍ-pi-kal"],
+  ["I would say my biggest weakness is that I sometimes take on too much","Diría que mi mayor debilidad es que a veces asumo demasiado","Clave: UÍK-nes · téik on"],["Where do you see the team heading in the next few years?","¿Hacia dónde ve que va el equipo en los próximos años?","Clave: JÉ-ding · fiú"]]},
+ matices:{ico:"🎭",name:"Hablar con matices",phrases:[
+  ["It is not so much that I disagree, it is more that I am concerned","No es tanto que no esté de acuerdo, sino que me preocupa","Clave: dis-a-GRÍ · kon-SÉRND"],["Admittedly, there are some drawbacks to consider","Hay que admitir que hay algunas desventajas","Clave: ad-MÍ-ted-li · DRÓ-baks"],
+  ["Had I known earlier, I would have handled it differently","De haberlo sabido antes, lo habría manejado diferente","Clave: nóun · ÉR-li-er · JÁN-deld"],["Not only did he arrive late, but he also forgot the documents","No solo llegó tarde, sino que olvidó los documentos","Clave: a-RÁIV · for-GÓT · DÓ-kiu-ments"],
+  ["By and large, the project was a success","En términos generales, el proyecto fue un éxito","Clave: larch · PRÓ-yekt · sak-SÉS"],["It remains to be seen whether the plan will work","Queda por ver si el plan funcionará","Clave: ri-MÉINS · UÉ-der"],
+  ["I can't help but wonder what would have happened","No puedo evitar preguntarme qué habría pasado","Clave: UÁN-der · JÁ-pend"],["Whatever the outcome, we have learned a great deal","Sea cual sea el resultado, hemos aprendido muchísimo","Clave: uat-É-ver · ÁUT-kam · lernd"]]},
+ viajes:{ico:"✈️",name:"Viajes y hotel",phrases:[
+  ["I would like to check in, please","Quisiera registrarme, por favor","ái ud láik tu chek in, plís"],["Is breakfast included?","¿Está incluido el desayuno?","is BRÉK-fast in-KLÚ-ded"],
+  ["What time is check out?","¿A qué hora es la salida?","uát táim is chek áut"],["My flight was delayed","Mi vuelo se retrasó","mái fláit uás di-LÉID"],
+  ["Could you recommend a good place to eat?","¿Me recomienda un buen lugar para comer?","kud iú re-ko-MÉND a gud pléis tu iit"],["How do I get to the airport from here?","¿Cómo llego al aeropuerto desde aquí?","jáu du ái guet tu de ÉR-port from jir"],
+  ["I lost my luggage","Perdí mi equipaje","ái lost mái LÁ-guech"],["Is this seat taken?","¿Está ocupado este asiento?","is dis siit TÉI-ken"]]},
+ casa:{ico:"🔑",name:"La casa y la renta",phrases:[
+  ["The heater is not working","La calefacción no funciona","de JÍ-ter is not UÉR-king"],["When is the rent due?","¿Cuándo hay que pagar la renta?","uén is de rent du"],
+  ["There is a leak under the sink","Hay una fuga debajo del lavabo","der is a liik AN-der de sink"],["Can someone come to fix it this week?","¿Puede venir alguien a arreglarlo esta semana?","kan SÁM-uan kam tu fix it dis uík"],
+  ["Utilities are included in the rent","Los servicios están incluidos en la renta","iu-TÍ-li-tis ar in-KLÚ-ded in de rent"],["I need to sign the lease","Necesito firmar el contrato","ái nid tu sáin de liis"],
+  ["My neighbors are very loud at night","Mis vecinos hacen mucho ruido de noche","mái NÉI-bors ar VÉ-ri láud at náit"],["I am moving out next month","Me mudo el próximo mes","ái am MÚ-ving áut next manz"]]},
+ tecnologia:{ico:"💻",name:"Tecnología e IT",phrases:[
+  ["Have you tried turning it off and on again?","¿Ya intentaste apagarlo y prenderlo otra vez?","Clave: TÉR-ning · a-GUÉN"],["Your password needs at least twelve characters","Tu contraseña necesita al menos doce caracteres","Clave: PÁS-uerd · KÁ-rak-ters"],
+  ["This email looks suspicious, do not click the link","Este correo se ve sospechoso, no hagas clic en el enlace","Clave: sas-PÍ-shos"],["I will open a ticket and escalate the issue","Abriré un ticket y escalaré el problema","Clave: ÉS-ka-leit · Í-shu"],
+  ["The network is down for maintenance","La red está caída por mantenimiento","Clave: MÉIN-te-nans"],["Please update your software as soon as possible","Por favor actualiza tu software lo antes posible","Clave: ap-DÉIT · SÓFT-uer"],
+  ["We need to back up the data before the update","Hay que respaldar los datos antes de actualizar","Clave: bak ap · DÉI-ta"],["Two factor authentication adds an extra layer of security","La autenticación de dos factores añade una capa extra de seguridad","Clave: o-zen-ti-KÉI-shon · LÉI-er"]]},
+ noticias:{ico:"📰",name:"Noticias y sociedad",phrases:[
+  ["Prices have gone up a lot this year","Los precios han subido mucho este año","Clave: PRÁI-ses · gon ap"],["It is hard to find affordable housing","Es difícil encontrar vivienda accesible","Clave: a-FÓR-da-bol · JÁU-sing"],
+  ["The government announced new rules yesterday","El gobierno anunció nuevas reglas ayer","Clave: GÁ-vern-ment · a-NÁUNST"],["Many people are worried about the economy","Mucha gente está preocupada por la economía","Clave: UÁ-rid · i-KÓ-no-mi"],
+  ["Technology is changing the way we work","La tecnología está cambiando nuestra forma de trabajar","Clave: tek-NÓ-lo-yi · CHÉIN-ying"],["Climate change affects everyone","El cambio climático nos afecta a todos","Clave: KLÁI-met · a-FÉKTS"],
+  ["I read an interesting article this morning","Leí un artículo interesante esta mañana","Clave: red (pasado) · ÁR-ti-kol"],["There are two sides to every story","Toda historia tiene dos lados","Clave: sáids · STÓ-ri"]]},
+ negociar:{ico:"💰",name:"Negociar",phrases:[
+  ["I was hoping we could meet somewhere in the middle","Esperaba que pudiéramos llegar a un punto medio","Clave: JÓU-ping · MÍ-del"],["That is a bit more than I am willing to pay","Es un poco más de lo que estoy dispuesto a pagar","Clave: UÍ-ling"],
+  ["If you can throw in free delivery, we have a deal","Si incluyes envío gratis, trato hecho","Clave: zróu in · di-LÍ-ve-ri"],["Let me sleep on it and get back to you tomorrow","Déjame pensarlo y te respondo mañana","Clave: sliip on it"],
+  ["Given my experience, I believe a higher salary is justified","Dada mi experiencia, creo que se justifica un salario más alto","Clave: GUÍ-ven · SÁ-la-ri · YÁS-ti-faid"],["What flexibility do you have on the price?","¿Qué flexibilidad tiene con el precio?","Clave: flek-si-BÍ-li-ti"],
+  ["I appreciate the offer, but I will need to decline","Agradezco la oferta, pero tendré que rechazarla","Clave: a-PRÍ-shi-eit · di-KLÁIN"],["Can we put that in writing?","¿Podemos ponerlo por escrito?","Clave: RÁI-ting"]]},
+ humor:{ico:"😏",name:"Humor y sarcasmo",phrases:[
+  ["Oh great, another Monday","Ay qué bien, otro lunes (sarcasmo)","Clave: alarga el 'great' con tono sarcástico"],["You can say that again","Ni que lo digas","Clave: a-GUÉN"],
+  ["I am not a morning person","No soy persona de mañanas","Clave: MÓR-ning PÉR-son"],["Talk about bad timing","Qué mal momento","Clave: TÁI-ming"],
+  ["That went over my head","No lo entendí (se me pasó por encima)","Clave: ÓU-ver mái jed"],["No offense, but that is a terrible idea","Sin ofender, pero es una idea terrible","Clave: o-FÉNS · TÉ-ri-bol"],
+  ["Just kidding, I am pulling your leg","Es broma, te estoy tomando el pelo","Clave: KÍ-ding · PÚ-ling"],["Well, that escalated quickly","Bueno, eso se puso intenso rápido","Clave: ÉS-ka-lei-ted · KUÍK-li"]]},
+ trabalenguas:{ico:"🌀",name:"Pronunciación experta",phrases:[
+  ["She sells seashells by the seashore","Ella vende conchas en la orilla del mar","Clave: S vs SH · SÍ-shels · SÍ-shor"],["Peter Piper picked a peck of pickled peppers","Peter Piper recogió un montón de chiles en vinagre","Clave: P con aire · pikt · PÍ-kold"],
+  ["How much wood would a woodchuck chuck","Cuánta madera tiraría una marmota","Clave: wud · UÚD-chak · chak"],["Red lorry, yellow lorry","Camión rojo, camión amarillo","Clave: R vs L · LÓ-ri · IÉ-lou"],
+  ["I thought a thought, but the thought I thought was not the thought I thought","Pensé un pensamiento, pero no era el que creí pensar","Clave: zot (TH sin voz)"],["Unique New York, unique New York","Nueva York única","Clave: iu-NÍK niú iork"],
+  ["Six slippery snails slid slowly seaward","Seis caracoles resbalosos se deslizaron lento hacia el mar","Clave: S + L · SLÍ-pe-ri · SÍ-uord"],["Thirty three thin thieves thought they thrilled the throne","Treinta y tres ladrones flacos creyeron emocionar al trono","Clave: TH con la lengua afuera en cada palabra"]]}
+};
+// Cada unidad se divide en lecciones de 4 frases
+const LESSONS=[]; // {key, unit, level, phrases:[idx...], n}
+LEVELS.forEach((L,li)=>L.units.forEach(uid=>{
+  const ph=UNITS[uid].phrases; let n=1;
+  for(let i=0;i<ph.length;i+=4){ LESSONS.push({key:uid+"-"+n,unit:uid,level:li,idx:[...Array(Math.min(4,ph.length-i)).keys()].map(k=>k+i),n:n++}); }
+}));
+
+const WORDS={
+ "Comida":{ico:"🍎",list:[["apple","manzana","🍎","ÁP-ol"],["bread","pan","🍞","bred"],["water","agua","💧","UÓ-ter"],["chicken","pollo","🍗","CHÍ-ken"],["rice","arroz","🍚","ráis"],["egg","huevo","🥚","eg"],["milk","leche","🥛","milk"],["cheese","queso","🧀","chiis"],["coffee","café","☕","KÓ-fi"],["fish","pescado","🐟","fish"],["banana","plátano","🍌","ba-NÁ-na"],["pizza","pizza","🍕","PÍT-sa"]]},
+ "Animales":{ico:"🐶",list:[["dog","perro","🐶","dog"],["cat","gato","🐱","kat"],["bird","pájaro","🐦","berd"],["horse","caballo","🐴","jors"],["cow","vaca","🐮","káu"],["bear","oso","🐻","ber"],["pig","cerdo","🐷","pig"],["mouse","ratón","🐭","máus"],["duck","pato","🦆","dak"],["sheep","oveja","🐑","shiip"],["fish","pez","🐠","fish"],["rabbit","conejo","🐰","RÁ-bit"]]},
+ "Casa":{ico:"🏠",list:[["house","casa","🏠","jáus"],["bed","cama","🛏️","bed"],["door","puerta","🚪","dor"],["chair","silla","🪑","cher"],["key","llave","🔑","ki"],["phone","teléfono","📱","fóun"],["window","ventana","🪟","UÍN-dou"],["shower","ducha","🚿","SHÁ-uer"],["clock","reloj","⏰","klok"],["light","luz","💡","láit"],["car","carro","🚗","kar"],["book","libro","📖","buk"]]},
+ "Ropa":{ico:"👕",list:[["shirt","camisa","👕","shert"],["pants","pantalón","👖","pants"],["shoes","zapatos","👟","shus"],["hat","gorra","🧢","jat"],["jacket","chaqueta","🧥","YÁ-ket"],["dress","vestido","👗","dres"],["socks","calcetines","🧦","soks"],["glasses","lentes","👓","GLÁ-ses"],["gloves","guantes","🧤","glavs"],["scarf","bufanda","🧣","skarf"],["bag","bolsa","👜","bag"],["boots","botas","🥾","buts"]]},
+ "Acciones":{ico:"🏃",list:[["eat","comer","🍽️","iit"],["sleep","dormir","😴","sliip"],["run","correr","🏃","ran"],["read","leer","📖","riid"],["drive","manejar","🚗","dráiv"],["cook","cocinar","🍳","kuk"],["work","trabajar","💼","uérk"],["swim","nadar","🏊","suím"],["write","escribir","✍️","ráit"],["listen","escuchar","👂","LÍ-sen"],["sing","cantar","🎤","sing"],["laugh","reír","😂","laf"]]},
+ "Lugares":{ico:"🏫",list:[["school","escuela","🏫","skul"],["hospital","hospital","🏥","JÓS-pi-tal"],["store","tienda","🏪","stor"],["bank","banco","🏦","benk"],["park","parque","🌳","park"],["airport","aeropuerto","✈️","ÉR-port"],["church","iglesia","⛪","cherch"],["beach","playa","🏖️","biich"],["mountain","montaña","⛰️","MÁUN-ten"],["restaurant","restaurante","🍜","RÉS-ta-rant"],["city","ciudad","🏙️","SÍ-ti"],["home","hogar","🏡","jóum"]]}
+};
+
+const FRIENDS=[
+ {id:"sam",name:"Profe Sam",av:"🧑‍🏫",bg:"var(--soft-green)",voice:"buttery",desc:"Tutor paciente. Ideal para empezar.",
+  persona:"Sam, a patient and warm English teacher. You guide the conversation like a lesson about everyday basics (name, where you live, work, likes).",hello:"Say hello as the teacher and ask Angel his name."},
+ {id:"emma",name:"Emma",av:"👩‍🦰",bg:"var(--soft-purple)",voice:"airy",desc:"Estudiante en Montana. Le encanta caminar en las montañas.",
+  persona:"Emma, a friendly 24-year-old college student in Montana who loves hiking, snow and coffee. You chat like a new friend from a language exchange app.",hello:"Introduce yourself as Emma and ask Angel where he is from."},
+ {id:"jake",name:"Jake",av:"👨‍🍳",bg:"var(--soft-yellow)",voice:"rounded",desc:"Cocinero. Habla de comida y restaurantes.",
+  persona:"Jake, a cheerful cook who loves food from every country. You chat about food, cooking and restaurants.",hello:"Introduce yourself as Jake the cook and ask Angel what food he likes."},
+ {id:"mike",name:"Mike",av:"👨‍💻",bg:"var(--soft-blue)",voice:"glassy",desc:"Técnico de IT. Habla de computadoras y trabajo.",
+  persona:"Mike, a relaxed IT help desk technician. You chat about computers, phones, school and jobs in technology, using very simple words.",hello:"Introduce yourself as Mike who works in IT and ask Angel if he likes computers."},
+ {id:"linda",name:"Linda",av:"👵",bg:"var(--soft-red)",voice:"rounded",desc:"Abuela muy amable. Habla de familia y el día a día.",
+  persona:"Linda, a sweet grandmother who loves her family, gardening and her cat. You chat about family, daily life and weather.",hello:"Introduce yourself as Linda and ask Angel how his day is."},
+ {id:"tom",name:"Tom (cliente)",av:"🧔",bg:"var(--soft-green)",voice:"glassy",desc:"Practica atender a un cliente en el restaurante.",
+  persona:"Tom, a customer at a Thai restaurant. Angel is your server. Act like a real (nice) customer: you arrive, ask for a table, ask about the menu, order, ask how spicy, ask for the check.",hello:"You just walked into the restaurant. Greet the server and say you need a table for two."}
+];
+
+/* =========================================================
+   GENERADOR DE FRASES (~50,000 combinando plantillas)
+   ========================================================= */
+const GL={
+ FOOD:[["rice","arroz"],["chicken","pollo"],["pizza","pizza"],["bread","pan"],["coffee","café"],["tea","té"],["water","agua"],["juice","jugo"],["soup","sopa"],["salad","ensalada"],["eggs","huevos"],["tacos","tacos"],["noodles","fideos"],["fish","pescado"],["cheese","queso"],["fruit","fruta"],["apples","manzanas"],["bananas","plátanos"],["cookies","galletas"],["ice cream","helado"],["milk","leche"],["potatoes","papas"],["beans","frijoles"],["steak","bistec"],["pasta","pasta"],["sandwiches","sándwiches"],["french fries","papas fritas"],["cereal","cereal"],["vegetables","verduras"],["cake","pastel"]],
+ PLACE:[["the store","la tienda"],["the bank","el banco"],["the park","el parque"],["the hospital","el hospital"],["the library","la biblioteca"],["the gym","el gimnasio"],["the airport","el aeropuerto"],["the restaurant","el restaurante"],["the school","la escuela"],["the office","la oficina"],["the post office","la oficina de correos"],["the pharmacy","la farmacia"],["the bus stop","la parada del autobús"],["the gas station","la gasolinera"],["the movie theater","el cine"],["the mall","el centro comercial"],["the beach","la playa"],["the church","la iglesia"],["the train station","la estación de tren"],["the supermarket","el supermercado"],["the hotel","el hotel"],["the coffee shop","la cafetería"],["the university","la universidad"],["the doctor's office","el consultorio"],["the bathroom","el baño"]],
+ FAM:[["mother","mamá","f"],["father","papá","m"],["brother","hermano","m"],["sister","hermana","f"],["wife","esposa","f"],["husband","esposo","m"],["son","hijo","m"],["daughter","hija","f"],["friend","amigo","m"],["cousin","primo","m"],["aunt","tía","f"],["uncle","tío","m"],["grandmother","abuela","f"],["grandfather","abuelo","m"],["boss","jefe","m"],["neighbor","vecina","f"]],
+ FEEL:[["tired","cansado","cansada"],["happy","feliz","feliz"],["sad","triste","triste"],["busy","ocupado","ocupada"],["sick","enfermo","enferma"],["nervous","nervioso","nerviosa"],["bored","aburrido","aburrida"],["excited","emocionado","emocionada"],["stressed","estresado","estresada"],["worried","preocupado","preocupada"],["angry","enojado","enojada"],["ready","listo","lista"],["calm","tranquilo","tranquila"],["confused","confundido","confundida"],["sleepy","con sueño","con sueño"],["surprised","sorprendido","sorprendida"],["proud","orgulloso","orgullosa"],["relaxed","relajado","relajada"],["upset","molesto","molesta"],["fine","bien","bien"]],
+ HOUR:[["one","una"],["two","dos"],["three","tres"],["four","cuatro"],["five","cinco"],["six","seis"],["seven","siete"],["eight","ocho"],["nine","nueve"],["ten","diez"],["eleven","once"],["twelve","doce"]],
+ TIME:[["today","hoy"],["tomorrow","mañana"],["tonight","esta noche"],["this afternoon","esta tarde"],["this weekend","este fin de semana"],["next week","la próxima semana"],["next month","el próximo mes"],["on Monday","el lunes"],["on Tuesday","el martes"],["on Wednesday","el miércoles"],["on Thursday","el jueves"],["on Friday","el viernes"],["on Saturday","el sábado"],["on Sunday","el domingo"],["after work","después del trabajo"],["after class","después de clase"],["in the morning","en la mañana"],["later","más tarde"],["this summer","este verano"],["soon","pronto"]],
+ TPAST:[["yesterday","ayer"],["last night","anoche"],["last week","la semana pasada"],["last weekend","el fin de semana pasado"],["this morning","esta mañana"],["two days ago","hace dos días"],["last month","el mes pasado"],["last year","el año pasado"],["on Saturday","el sábado"],["a few weeks ago","hace unas semanas"]],
+ ITEM:[["jacket","chaqueta","f"],["shirt","camisa","f"],["phone","teléfono","m"],["laptop","computadora portátil","f"],["watch","reloj","m"],["backpack","mochila","f"],["hat","gorra","f"],["bike","bicicleta","f"],["lamp","lámpara","f"],["chair","silla","f"],["table","mesa","f"],["TV","televisión","f"],["coffee maker","cafetera","f"],["blender","licuadora","f"],["sofa","sofá","m"],["rug","alfombra","f"],["mirror","espejo","m"],["wallet","cartera","f"],["belt","cinturón","m"],["dress","vestido","m"],["sweater","suéter","m"],["coat","abrigo","m"],["umbrella","paraguas","m"],["microwave","microondas","m"],["printer","impresora","f"],["keyboard","teclado","m"],["charger","cargador","m"],["tablet","tableta","f"],["camera","cámara","f"],["guitar","guitarra","f"]],
+ BODY:[["head","la cabeza"],["stomach","el estómago"],["back","la espalda"],["throat","la garganta"],["tooth","una muela"],["knee","la rodilla"],["foot","el pie"],["arm","el brazo"],["ear","el oído"],["neck","el cuello"],["shoulder","el hombro"],["leg","la pierna"]],
+ TOPIC:[["the city","la ciudad"],["public transportation","el transporte público"],["this job","este trabajo"],["online school","la escuela en línea"],["artificial intelligence","la inteligencia artificial"],["living in Montana","vivir en Montana"],["learning English","aprender inglés"],["cooking at home","cocinar en casa"],["working at night","trabajar de noche"],["the new plan","el nuevo plan"],["this neighborhood","este vecindario"],["the economy","la economía"],["technology","la tecnología"],["cybersecurity","la ciberseguridad"],["saving money","ahorrar dinero"],["traveling alone","viajar solo"],["the internet","el internet"],["college","la universidad"],["this app","esta app"],["owning a car","tener carro"],["renting a house","rentar una casa"],["working from home","trabajar desde casa"],["living in a big city","vivir en una ciudad grande"],["the weather here","el clima aquí"],["healthy food","la comida saludable"]],
+ ADJ:[["important","importante"],["interesting","interesante"],["difficult","difícil"],["easy","fácil"],["useful","útil"],["amazing","increíble"],["terrible","terrible"],["essential","esencial"],["stressful","estresante"],["exciting","emocionante"],["frustrating","frustrante"],["unpredictable","impredecible"]],
+ ADJN:[["difficult","difícil"],["terrible","terrible"],["stressful","estresante"],["frustrating","frustrante"],["unpredictable","impredecible"]],
+ RES:[["time","tiempo"],["money","dinero"],["energy","energía"],["help","ayuda"],["patience","paciencia"],["experience","experiencia"]],
+ // [en, es infinitivo, en pasado, es yo pasado, es tú pasado, en participio, es participio, en -ing]
+ VB:[
+ ["cook dinner","cocinar la cena","cooked dinner","cociné la cena","cocinaste la cena","cooked dinner","cocinado la cena","cooking dinner"],
+ ["clean the house","limpiar la casa","cleaned the house","limpié la casa","limpiaste la casa","cleaned the house","limpiado la casa","cleaning the house"],
+ ["go to the gym","ir al gimnasio","went to the gym","fui al gimnasio","fuiste al gimnasio","gone to the gym","ido al gimnasio","going to the gym"],
+ ["study English","estudiar inglés","studied English","estudié inglés","estudiaste inglés","studied English","estudiado inglés","studying English"],
+ ["watch a movie","ver una película","watched a movie","vi una película","viste una película","watched a movie","visto una película","watching a movie"],
+ ["read a book","leer un libro","read a book","leí un libro","leíste un libro","read a book","leído un libro","reading a book"],
+ ["walk the dog","pasear al perro","walked the dog","paseé al perro","paseaste al perro","walked the dog","paseado al perro","walking the dog"],
+ ["do the laundry","lavar la ropa","did the laundry","lavé la ropa","lavaste la ropa","done the laundry","lavado la ropa","doing the laundry"],
+ ["wash the dishes","lavar los platos","washed the dishes","lavé los platos","lavaste los platos","washed the dishes","lavado los platos","washing the dishes"],
+ ["go shopping","ir de compras","went shopping","fui de compras","fuiste de compras","gone shopping","ido de compras","going shopping"],
+ ["pay the bills","pagar las cuentas","paid the bills","pagué las cuentas","pagaste las cuentas","paid the bills","pagado las cuentas","paying the bills"],
+ ["fix the car","arreglar el carro","fixed the car","arreglé el carro","arreglaste el carro","fixed the car","arreglado el carro","fixing the car"],
+ ["play soccer","jugar fútbol","played soccer","jugué fútbol","jugaste fútbol","played soccer","jugado fútbol","playing soccer"],
+ ["listen to music","escuchar música","listened to music","escuché música","escuchaste música","listened to music","escuchado música","listening to music"],
+ ["call the doctor","llamar al doctor","called the doctor","llamé al doctor","llamaste al doctor","called the doctor","llamado al doctor","calling the doctor"],
+ ["eat lunch","almorzar","ate lunch","almorcé","almorzaste","eaten lunch","almorzado","eating lunch"],
+ ["visit family","visitar a la familia","visited family","visité a la familia","visitaste a la familia","visited family","visitado a la familia","visiting family"],
+ ["take a nap","tomar una siesta","took a nap","tomé una siesta","tomaste una siesta","taken a nap","tomado una siesta","taking a nap"],
+ ["practice English","practicar inglés","practiced English","practiqué inglés","practicaste inglés","practiced English","practicado inglés","practicing English"],
+ ["drive to work","manejar al trabajo","drove to work","manejé al trabajo","manejaste al trabajo","driven to work","manejado al trabajo","driving to work"],
+ ["buy groceries","hacer las compras","bought groceries","hice las compras","hiciste las compras","bought groceries","hecho las compras","buying groceries"],
+ ["send an email","enviar un correo","sent an email","envié un correo","enviaste un correo","sent an email","enviado un correo","sending an email"],
+ ["make breakfast","hacer el desayuno","made breakfast","hice el desayuno","hiciste el desayuno","made breakfast","hecho el desayuno","making breakfast"],
+ ["take the bus","tomar el autobús","took the bus","tomé el autobús","tomaste el autobús","taken the bus","tomado el autobús","taking the bus"],
+ ["go for a walk","salir a caminar","went for a walk","salí a caminar","saliste a caminar","gone for a walk","salido a caminar","going for a walk"],
+ ["save money","ahorrar dinero","saved money","ahorré dinero","ahorraste dinero","saved money","ahorrado dinero","saving money"],
+ ["look for a new job","buscar un trabajo nuevo","looked for a new job","busqué un trabajo nuevo","buscaste un trabajo nuevo","looked for a new job","buscado un trabajo nuevo","looking for a new job"],
+ ["travel to Mexico","viajar a México","traveled to Mexico","viajé a México","viajaste a México","traveled to Mexico","viajado a México","traveling to Mexico"],
+ ["speak English","hablar inglés","spoke English","hablé inglés","hablaste inglés","spoken English","hablado inglés","speaking English"],
+ ["go to the dentist","ir al dentista","went to the dentist","fui al dentista","fuiste al dentista","gone to the dentist","ido al dentista","going to the dentist"],
+ ["write a letter","escribir una carta","wrote a letter","escribí una carta","escribiste una carta","written a letter","escrito una carta","writing a letter"],
+ ["meet new people","conocer gente nueva","met new people","conocí gente nueva","conociste gente nueva","met new people","conocido gente nueva","meeting new people"],
+ ["take pictures","tomar fotos","took pictures","tomé fotos","tomaste fotos","taken pictures","tomado fotos","taking pictures"],
+ ["ride a bike","andar en bicicleta","rode a bike","anduve en bicicleta","anduviste en bicicleta","ridden a bike","andado en bicicleta","riding a bike"],
+ ["go swimming","ir a nadar","went swimming","fui a nadar","fuiste a nadar","gone swimming","ido a nadar","going swimming"],
+ ["learn to cook","aprender a cocinar","learned to cook","aprendí a cocinar","aprendiste a cocinar","learned to cook","aprendido a cocinar","learning to cook"],
+ ["drink coffee","tomar café","drank coffee","tomé café","tomaste café","drunk coffee","tomado café","drinking coffee"],
+ ["go hiking","ir de excursión","went hiking","fui de excursión","fuiste de excursión","gone hiking","ido de excursión","going hiking"],
+ ["paint the room","pintar el cuarto","painted the room","pinté el cuarto","pintaste el cuarto","painted the room","pintado el cuarto","painting the room"],
+ ["order pizza","pedir pizza","ordered pizza","pedí pizza","pediste pizza","ordered pizza","pedido pizza","ordering pizza"],
+ ["play video games","jugar videojuegos","played video games","jugué videojuegos","jugaste videojuegos","played video games","jugado videojuegos","playing video games"],
+ ["go to the beach","ir a la playa","went to the beach","fui a la playa","fuiste a la playa","gone to the beach","ido a la playa","going to the beach"],
+ ["rent an apartment","rentar un apartamento","rented an apartment","renté un apartamento","rentaste un apartamento","rented an apartment","rentado un apartamento","renting an apartment"],
+ ["buy a car","comprar un carro","bought a car","compré un carro","compraste un carro","bought a car","comprado un carro","buying a car"],
+ ["open a bank account","abrir una cuenta de banco","opened a bank account","abrí una cuenta de banco","abriste una cuenta de banco","opened a bank account","abierto una cuenta de banco","opening a bank account"],
+ ["fill out the form","llenar el formulario","filled out the form","llené el formulario","llenaste el formulario","filled out the form","llenado el formulario","filling out the form"],
+ ["update the computer","actualizar la computadora","updated the computer","actualicé la computadora","actualizaste la computadora","updated the computer","actualizado la computadora","updating the computer"],
+ ["change the password","cambiar la contraseña","changed the password","cambié la contraseña","cambiaste la contraseña","changed the password","cambiado la contraseña","changing the password"],
+ ["finish the project","terminar el proyecto","finished the project","terminé el proyecto","terminaste el proyecto","finished the project","terminado el proyecto","finishing the project"],
+ ["ask for help","pedir ayuda","asked for help","pedí ayuda","pediste ayuda","asked for help","pedido ayuda","asking for help"],
+ ["take a break","tomar un descanso","took a break","tomé un descanso","tomaste un descanso","taken a break","tomado un descanso","taking a break"],
+ ["plant flowers","plantar flores","planted flowers","planté flores","plantaste flores","planted flowers","plantado flores","planting flowers"],
+ ["bake a cake","hornear un pastel","baked a cake","horneé un pastel","horneaste un pastel","baked a cake","horneado un pastel","baking a cake"],
+ ["go camping","ir de campamento","went camping","fui de campamento","fuiste de campamento","gone camping","ido de campamento","going camping"],
+ ["watch the game","ver el partido","watched the game","vi el partido","viste el partido","watched the game","visto el partido","watching the game"],
+ ["take an online class","tomar una clase en línea","took an online class","tomé una clase en línea","tomaste una clase en línea","taken an online class","tomado una clase en línea","taking an online class"],
+ ["learn to play guitar","aprender a tocar guitarra","learned to play guitar","aprendí a tocar guitarra","aprendiste a tocar guitarra","learned to play guitar","aprendido a tocar guitarra","learning to play guitar"],
+ ["make a reservation","hacer una reservación","made a reservation","hice una reservación","hiciste una reservación","made a reservation","hecho una reservación","making a reservation"],
+ ["go skiing","ir a esquiar","went skiing","fui a esquiar","fuiste a esquiar","gone skiing","ido a esquiar","going skiing"],
+ ["cook something new","cocinar algo nuevo","cooked something new","cociné algo nuevo","cocinaste algo nuevo","cooked something new","cocinado algo nuevo","cooking something new"]
+ ],
+ IDIOM:[
+ ["It's a piece of cake","Es pan comido"],["Break a leg tonight","Mucha suerte esta noche"],["I'm feeling under the weather","Me siento un poco enfermo"],["Let's play it by ear","Vamos viendo sobre la marcha"],["That's the last straw","Esa es la gota que derramó el vaso"],["We're on the same page","Estamos de acuerdo"],["I'll keep you posted","Te mantengo al tanto"],["It's not my cup of tea","No es lo mío"],["You hit the nail on the head","Diste en el clavo"],["Let's get the ball rolling","Pongamos manos a la obra"],
+ ["I'm all ears","Soy todo oídos"],["It slipped my mind","Se me olvidó"],["We're running out of time","Se nos acaba el tiempo"],["Better late than never","Más vale tarde que nunca"],["I have a lot on my plate","Tengo muchas cosas encima"],["Don't count your chickens before they hatch","No vendas la piel del oso antes de cazarlo"],["Every cloud has a silver lining","No hay mal que por bien no venga"],["Actions speak louder than words","Los hechos dicen más que las palabras"],["Let's call it a day","Dejémoslo por hoy"],["It's a long shot, but let's try","Es poco probable, pero intentemos"],
+ ["Keep your chin up","Ánimo, no te desanimes"],["I'm on the fence about it","Estoy indeciso"],["We're back to square one","Volvemos al punto de partida"],["That rings a bell","Eso me suena"],["Let's not beat around the bush","No nos andemos con rodeos"],["I'll take a rain check","Lo dejamos para otra ocasión"],["It costs an arm and a leg","Cuesta un ojo de la cara"],["He's pulling your leg","Te está tomando el pelo"],["Don't cry over spilled milk","No llores sobre la leche derramada"],["The ball is in your court","La decisión es tuya"],
+ ["I'm burning the midnight oil","Me estoy desvelando trabajando"],["Speak of the devil","Hablando del rey de Roma"],["It's raining cats and dogs","Está lloviendo a cántaros"],["Once in a blue moon","De vez en cuando, muy rara vez"],["Let's cut to the chase","Vamos al grano"],["I'm in hot water","Estoy en problemas"],["We'll cross that bridge when we come to it","Ya veremos cuando llegue el momento"],["That ship has sailed","Esa oportunidad ya pasó"],["Bite the bullet and do it","Aguántate y hazlo"],["It's not rocket science","No es tan complicado"]
+ ]
+};
+const capES=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const fixES=s=>capES(s.replace(/\ba el\b/g,"al").replace(/\bde el\b/g,"del").replace(/ y (?=(i|hi)(?!e))/g," e ").replace(/ o (?=(o|ho))/g," u "));
+const art=(g,m,f)=>g==="f"?f:m;
+// Plantillas: lv = nivel (0=A1..4=C1), s = listas (VB2 = otro verbo distinto), f = función que arma [inglés, español]
+const GT=[
+ // ---------- A1 ----------
+ {lv:0,s:["FOOD"],f:a=>[`I want ${a[0]}, please`,`Quiero ${a[1]}, por favor`]},
+ {lv:0,s:["FOOD"],f:a=>[`Do you have ${a[0]}?`,`¿Tienes ${a[1]}?`]},
+ {lv:0,s:["FOOD"],f:a=>[`I eat ${a[0]} every day`,`Como ${a[1]} todos los días`]},
+ {lv:0,s:["PLACE"],f:a=>[`Where is ${a[0]}?`,`¿Dónde está ${a[1]}?`]},
+ {lv:0,s:["PLACE"],f:a=>[`I am at ${a[0]}`,`Estoy en ${a[1]}`]},
+ {lv:0,s:["PLACE","TIME"],f:(a,t)=>[`I am going to ${a[0]} ${t[0]}`,`Voy a ${a[1]} ${t[1]}`]},
+ {lv:0,s:["FAM"],f:a=>[`This is my ${a[0]}`,`${art(a[2],"Este","Esta")} es mi ${a[1]}`]},
+ {lv:0,s:["FEEL"],f:a=>[`I am ${a[0]} today`,`Hoy estoy ${a[1]}`]},
+ {lv:0,s:["FAM","FEEL"],f:(p,x)=>[`My ${p[0]} is ${x[0]}`,`Mi ${p[1]} está ${p[2]==="f"?x[2]:x[1]}`]},
+ {lv:0,s:["VB"],f:v=>[`I want to ${v[0]}`,`Quiero ${v[1]}`]},
+ {lv:0,s:["VB"],f:v=>[`I like to ${v[0]}`,`Me gusta ${v[1]}`]},
+ {lv:0,s:["VB"],f:v=>[`I can ${v[0]}`,`Puedo ${v[1]}`]},
+ {lv:0,s:["VB"],f:v=>[`I can't ${v[0]} today`,`Hoy no puedo ${v[1]}`]},
+ {lv:0,s:["VB"],f:v=>[`Do you want to ${v[0]}?`,`¿Quieres ${v[1]}?`]},
+ {lv:0,s:["VB","TIME"],f:(v,t)=>[`I need to ${v[0]} ${t[0]}`,`Necesito ${v[1]} ${t[1]}`]},
+ {lv:0,s:["HOUR"],f:h=>[`It is ${h[0]} o'clock`,h[0]==="one"?"Es la una":`Son las ${h[1]}`]},
+ {lv:0,s:["TIME"],f:t=>[`See you ${t[0]}`,`Nos vemos ${t[1]}`]},
+ // ---------- A2 ----------
+ {lv:1,s:["VB"],f:v=>[`Yesterday I ${v[2]}`,`Ayer ${v[3]}`]},
+ {lv:1,s:["VB","TPAST"],f:(v,t)=>[`I ${v[2]} ${t[0]}`,`${v[3]} ${t[1]}`]},
+ {lv:1,s:["VB","TPAST"],f:(v,t)=>[`I didn't ${v[0]} ${t[0]}`,`No ${v[3]} ${t[1]}`]},
+ {lv:1,s:["VB","TPAST"],f:(v,t)=>[`Did you ${v[0]} ${t[0]}?`,`¿${capES(v[4])} ${t[1]}?`]},
+ {lv:1,s:["VB","TIME"],f:(v,t)=>[`I am going to ${v[0]} ${t[0]}`,`Voy a ${v[1]} ${t[1]}`]},
+ {lv:1,s:["VB","TIME"],f:(v,t)=>[`Can we ${v[0]} ${t[0]}?`,`¿Podemos ${v[1]} ${t[1]}?`]},
+ {lv:1,s:["VB","TIME"],f:(v,t)=>[`I have to ${v[0]} ${t[0]}`,`Tengo que ${v[1]} ${t[1]}`]},
+ {lv:1,s:["VB","VB2"],f:(v,w)=>[`I want to ${v[0]} and ${w[0]}`,`Quiero ${v[1]} y ${w[1]}`]},
+ {lv:1,s:["VB","VB2"],f:(v,w)=>[`First I'm going to ${v[0]}, and then ${w[0]}`,`Primero voy a ${v[1]} y luego ${w[1]}`]},
+ {lv:1,s:["ITEM"],f:i=>[`How much is this ${i[0]}?`,`¿Cuánto cuesta ${art(i[2],"este","esta")} ${i[1]}?`]},
+ {lv:1,s:["ITEM"],f:i=>[`I'm looking for a ${i[0]}`,`Busco ${art(i[2],"un","una")} ${i[1]}`]},
+ {lv:1,s:["ITEM","TPAST"],f:(i,t)=>[`I bought a new ${i[0]} ${t[0]}`,`Compré ${art(i[2],"un","una")} ${i[1]} ${art(i[2],"nuevo","nueva")} ${t[1]}`]},
+ {lv:1,s:["BODY"],f:b=>[`My ${b[0]} hurts`,`Me duele ${b[1]}`]},
+ {lv:1,s:["PLACE","TPAST"],f:(p,t)=>[`I went to ${p[0]} ${t[0]}`,`Fui a ${p[1]} ${t[1]}`]},
+ {lv:1,s:["PLACE","TIME"],f:(p,t)=>[`Let's meet at ${p[0]} ${t[0]}`,`Veámonos en ${p[1]} ${t[1]}`]},
+ // ---------- B1 ----------
+ {lv:2,s:["VB"],f:v=>[`I have never ${v[5]}`,`Nunca he ${v[6]}`]},
+ {lv:2,s:["VB"],f:v=>[`Have you ever ${v[5]}?`,`¿Alguna vez has ${v[6]}?`]},
+ {lv:2,s:["VB"],f:v=>[`I have already ${v[5]}`,`Ya he ${v[6]}`]},
+ {lv:2,s:["VB"],f:v=>[`When I was a kid, I used to ${v[0]}`,`Cuando era niño, solía ${v[1]}`]},
+ {lv:2,s:["VB"],f:v=>[`Could you help me ${v[0]}?`,`¿Podrías ayudarme a ${v[1]}?`]},
+ {lv:2,s:["VB","TIME"],f:(v,t)=>[`I prefer to ${v[0]} ${t[0]}`,`Prefiero ${v[1]} ${t[1]}`]},
+ {lv:2,s:["VB","TIME"],f:(v,t)=>[`If I have time, I'm going to ${v[0]} ${t[0]}`,`Si tengo tiempo, voy a ${v[1]} ${t[1]}`]},
+ {lv:2,s:["VB","TIME"],f:(v,t)=>[`Do you want to ${v[0]} with me ${t[0]}?`,`¿Quieres ${v[1]} conmigo ${t[1]}?`]},
+ {lv:2,s:["VB","VB2"],f:(v,w)=>[`I'd rather ${v[0]} than ${w[0]}`,`Prefiero ${v[1]} que ${w[1]}`]},
+ {lv:2,s:["VB","VB2"],f:(v,w)=>[`I had to ${v[0]} instead of ${w[7]}`,`Tuve que ${v[1]} en lugar de ${w[1]}`]},
+ {lv:2,s:["TOPIC","ADJ"],f:(t,a)=>[`In my opinion, ${t[0]} is ${a[0]}`,`En mi opinión, ${t[1]} es ${a[1]}`]},
+ {lv:2,s:["TOPIC","ADJ"],f:(t,a)=>[`I think ${t[0]} is really ${a[0]}`,`Creo que ${t[1]} es muy ${a[1]}`]},
+ {lv:2,s:["TOPIC","ADJ"],f:(t,a)=>[`I don't think ${t[0]} is ${a[0]}`,`No creo que ${t[1]} sea ${a[1]}`]},
+ // ---------- B2 ----------
+ {lv:3,s:["RES","VB"],f:(r,v)=>[`If I had more ${r[0]}, I could ${v[0]}`,`Si tuviera más ${r[1]}, podría ${v[1]}`]},
+ {lv:3,s:["VB","TPAST"],f:(v,t)=>[`I should have ${v[5]} ${t[0]}`,`Debí haber ${v[6]} ${t[1]}`]},
+ {lv:3,s:["VB","TIME"],f:(v,t)=>[`I wish I could ${v[0]} ${t[0]}`,`Ojalá pudiera ${v[1]} ${t[1]}`]},
+ {lv:3,s:["VB","TIME"],f:(v,t)=>[`I'm thinking about ${v[7]} ${t[0]}`,`Estoy pensando en ${v[1]} ${t[1]}`]},
+ {lv:3,s:["VB"],f:v=>[`I'm really looking forward to ${v[7]}`,`Tengo muchas ganas de ${v[1]}`]},
+ {lv:3,s:["VB"],f:v=>[`If I had known, I would have ${v[5]}`,`Si hubiera sabido, habría ${v[6]}`]},
+ {lv:3,s:["VB","VB2"],f:(v,w)=>[`I'm not sure whether to ${v[0]} or ${w[0]}`,`No sé si ${v[1]} o ${w[1]}`]},
+ {lv:3,s:["VB","VB2"],f:(v,w)=>[`Instead of ${w[7]}, I decided to ${v[0]}`,`En lugar de ${w[1]}, decidí ${v[1]}`]},
+ {lv:3,s:["TOPIC","ADJN"],f:(t,a)=>[`The main problem with ${t[0]} is that it's ${a[0]}`,`El problema principal de ${t[1]} es que es ${a[1]}`]},
+ {lv:3,s:["TOPIC","ADJ"],f:(t,a)=>[`On the other hand, ${t[0]} can be ${a[0]}`,`Por otro lado, ${t[1]} puede ser ${a[1]}`]},
+ // ---------- C1 ----------
+ {lv:4,s:["VB","VB2"],f:(v,w)=>[`Not only did I ${v[0]}, but I also ${w[2]}`,`No solo ${v[3]}, sino que también ${w[3]}`]},
+ {lv:4,s:["VB","VB2"],f:(v,w)=>[`I'd sooner ${v[0]} than ${w[0]}`,`Preferiría mil veces ${v[1]} que ${w[1]}`]},
+ {lv:4,s:["VB"],f:v=>[`Had I known, I would have ${v[5]}`,`De haberlo sabido, habría ${v[6]}`]},
+ {lv:4,s:["VB"],f:v=>[`I can't help but wonder whether I should ${v[0]}`,`No puedo evitar preguntarme si debería ${v[1]}`]},
+ {lv:4,s:["VB"],f:v=>[`By the time I ${v[2]}, it was too late`,`Para cuando ${v[3]}, ya era demasiado tarde`]},
+ {lv:4,s:["VB","TIME"],f:(v,t)=>[`Were I to ${v[0]} ${t[0]}, I'd let you know`,`Si llegara a ${v[1]} ${t[1]}, te aviso`]},
+ {lv:4,s:["VB","TIME"],f:(v,t)=>[`I've been meaning to ${v[0]}, so I'll do it ${t[0]}`,`Llevo tiempo queriendo ${v[1]}, así que lo haré ${t[1]}`]},
+ {lv:4,s:["TOPIC","ADJ"],f:(t,a)=>[`It remains to be seen whether ${t[0]} will be ${a[0]}`,`Queda por ver si ${t[1]} será ${a[1]}`]},
+ {lv:4,s:["TOPIC","ADJN"],f:(t,a)=>[`Admittedly, ${t[0]} is ${a[0]}, but it's worth it`,`Hay que admitir que ${t[1]} es ${a[1]}, pero vale la pena`]},
+ {lv:4,s:["IDIOM"],f:i=>[i[0],i[1]]}
+];
+const gtSize=t=>t.s.reduce((n,k,i)=>n*(k==="VB2"?GL.VB.length-1:GL[k].length),1);
+const GEN={
+ count(lv){ return GT.filter(t=>lv==null||t.lv===lv).reduce((n,t)=>n+gtSize(t),0); },
+ // frase número idx de la plantilla ti
+ make(ti,idx){
+   const t=GT[ti], parts=[]; let r=idx, firstVB=-1;
+   t.s.forEach(k=>{
+     if(k==="VB2"){ const n=GL.VB.length-1; let j=r%n; r=Math.floor(r/n); if(j>=firstVB) j++; parts.push(GL.VB[j]); }
+     else { const L=GL[k], j=r%L.length; r=Math.floor(r/L.length); if(k==="VB") firstVB=j; parts.push(L[j]); }
+   });
+   const [en,es]=t.f(...parts);
+   return [en.charAt(0).toUpperCase()+en.slice(1), fixES(es), ""];
+ },
+ // n frases al azar del nivel, evitando las ya vistas
+ pick(lv,n,seen){
+   const ts=GT.map((t,i)=>i).filter(i=>GT[i].lv===lv), out=[], keys=[];
+   const total=ts.reduce((s,i)=>s+gtSize(GT[i]),0);
+   for(let tries=0;out.length<n&&tries<n*40;tries++){
+     let x=Math.floor(Math.random()*total), ti=ts[0];
+     for(const i of ts){ const sz=gtSize(GT[i]); if(x<sz){ ti=i; break; } x-=sz; }
+     const key=ti+":"+x; if(seen.has(key)||keys.includes(key)) continue;
+     // evitar dos frases de la misma plantilla en una ronda
+     if(keys.some(k=>k.split(":")[0]==String(ti))&&tries<n*20) continue;
+     keys.push(key); out.push(GEN.make(ti,x));
+   }
+   return {phrases:out,keys};
+ }
+};
+
+/* =========================================================
+   CONVERSACIONES ESCRITAS (funcionan sin IA)
+   Cada turno: [lo que dice el personaje (inglés), (español), [[respuesta inglés, español], ...], meta que cumple (1-5) o 0]
+   ========================================================= */
+const SCRIPTS={
+"a1-vecino":[
+ ["Hi! I'm Emma. I just moved in next door.","¡Hola! Soy Emma. Me acabo de mudar al lado.",[["Hi Emma, my name is Angel","Hola Emma, me llamo Angel"],["Nice to meet you, I am Angel","Mucho gusto, soy Angel"]],1],
+ ["Nice to meet you, Angel! Do you live here?","¡Mucho gusto, Angel! ¿Vives aquí?",[["Yes, I live in this building","Sí, vivo en este edificio"],["Yes, I live in Bozeman","Sí, vivo en Bozeman"]],2],
+ ["Cool! Where are you from?","¡Genial! ¿De dónde eres?",[["I am from Latin America","Soy de Latinoamérica"],["I am from another country","Soy de otro país"]],2],
+ ["Wow! What do you do?","¡Wow! ¿A qué te dedicas?",[["I work in a restaurant","Trabajo en un restaurante"],["I am a student","Soy estudiante"]],3],
+ ["That's great! Do you like it?","¡Qué bien! ¿Te gusta?",[["Yes, I like it a lot","Sí, me gusta mucho"],["It is hard but I like it","Es difícil pero me gusta"]],0],
+ ["I'm a nurse. I work at the hospital.","Soy enfermera. Trabajo en el hospital.",[["Nice! Do you like your job?","¡Qué bien! ¿Te gusta tu trabajo?"],["Wow, is it a hard job?","Wow, ¿es un trabajo difícil?"]],4],
+ ["Yes, I love it! Do you have a family?","¡Sí, me encanta! ¿Tienes familia?",[["Yes, I have a wife","Sí, tengo esposa"],["Yes, I have a big family","Sí, tengo una familia grande"]],0],
+ ["Nice! Do you like Bozeman?","¡Qué bien! ¿Te gusta Bozeman?",[["Yes, I like it a lot","Sí, me gusta mucho"],["Yes, but it is very cold","Sí, pero hace mucho frío"]],0],
+ ["Ha ha, yes! It's very cold in winter. Do you like snow?","¡Jaja, sí! Hace mucho frío en invierno. ¿Te gusta la nieve?",[["No, I don't like snow","No, no me gusta la nieve"],["Yes, I like snow","Sí, me gusta la nieve"]],0],
+ ["Is there a good store near here?","¿Hay una buena tienda cerca de aquí?",[["Yes, there is a store near here","Sí, hay una tienda cerca"],["Yes, the store is on Main Street","Sí, la tienda está en Main Street"]],0],
+ ["Thank you so much! You are very nice.","¡Muchas gracias! Eres muy amable.",[["You are welcome","De nada"],["No problem, Emma","No hay problema, Emma"]],0],
+ ["Well, I have to go. See you later!","Bueno, me tengo que ir. ¡Nos vemos!",[["See you later, Emma","Nos vemos, Emma"],["Bye, have a nice day","Adiós, que tengas un buen día"]],5]
+],
+"a1-cafe":[
+ ["Hi there! Welcome to Joe's Coffee. How are you today?","¡Hola! Bienvenido a Joe's Coffee. ¿Cómo estás hoy?",[["Hi, I am good, thank you","Hola, estoy bien, gracias"],["Hello, I am fine, and you?","Hola, estoy bien, ¿y tú?"]],1],
+ ["I'm great, thanks! What can I get for you?","¡Muy bien, gracias! ¿Qué te sirvo?",[["I want a coffee, please","Quiero un café, por favor"],["Can I have a hot chocolate?","¿Me da un chocolate caliente?"]],2],
+ ["Sure! Small, medium or large?","¡Claro! ¿Chico, mediano o grande?",[["Medium, please","Mediano, por favor"],["Large, please","Grande, por favor"]],0],
+ ["Do you want milk and sugar?","¿Quieres leche y azúcar?",[["Yes, milk please","Sí, leche por favor"],["No, thank you","No, gracias"]],0],
+ ["Anything to eat? We have muffins, bagels and sandwiches.","¿Algo de comer? Tenemos muffins, bagels y sándwiches.",[["I want a muffin, please","Quiero un muffin, por favor"],["Can I have a sandwich?","¿Me da un sándwich?"]],3],
+ ["Good choice! For here or to go?","¡Buena elección! ¿Para aquí o para llevar?",[["For here, please","Para aquí, por favor"],["To go, please","Para llevar, por favor"]],0],
+ ["Anything else?","¿Algo más?",[["No, how much is it?","No, ¿cuánto es?"],["That's all. How much is it?","Es todo. ¿Cuánto es?"]],4],
+ ["It's nine dollars and fifty cents. Cash or card?","Son nueve dólares con cincuenta. ¿Efectivo o tarjeta?",[["Card, please","Con tarjeta, por favor"],["Cash","En efectivo"]],0],
+ ["Here is your receipt. Do you want to leave a tip?","Aquí está tu recibo. ¿Quieres dejar propina?",[["Yes, of course","Sí, claro"],["Yes, one dollar","Sí, un dólar"]],0],
+ ["Thank you! Your coffee will be ready in two minutes.","¡Gracias! Tu café estará listo en dos minutos.",[["Thank you very much","Muchas gracias"],["Thanks, no problem","Gracias, no hay problema"]],5],
+ ["Here you go! Enjoy your coffee!","¡Aquí tienes! ¡Disfruta tu café!",[["Thanks, see you tomorrow","Gracias, hasta mañana"],["Thank you, have a nice day","Gracias, que tengas buen día"]],5]
+],
+"a1-perdido":[
+ ["Hello, young man. Are you okay? Do you need help?","Hola, joven. ¿Estás bien? ¿Necesitas ayuda?",[["Yes, I am lost","Sí, estoy perdido"],["Yes, I need help, please","Sí, necesito ayuda, por favor"]],1],
+ ["Oh no! Where do you want to go?","¡Ay no! ¿A dónde quieres ir?",[["Where is the bank?","¿Dónde está el banco?"],["Where is the library?","¿Dónde está la biblioteca?"]],2],
+ ["Okay, go straight two blocks, then turn left on Main Street, and it's next to the coffee shop on the right.","Bueno, sigue derecho dos cuadras, luego dobla a la izquierda en Main Street, y está junto a la cafetería a la derecha.",[["Sorry, I don't understand","Perdón, no entiendo"],["Can you repeat that, please?","¿Puede repetir, por favor?"]],3],
+ ["Of course. First, go straight. Two blocks.","Claro. Primero, sigue derecho. Dos cuadras.",[["Okay, two blocks","Está bien, dos cuadras"],["Go straight two blocks","Seguir derecho dos cuadras"]],0],
+ ["Then, turn left.","Luego, dobla a la izquierda.",[["Turn left, okay","A la izquierda, está bien"],["Left, okay","A la izquierda, bien"]],0],
+ ["And it is next to the coffee shop.","Y está junto a la cafetería.",[["So, two blocks and then left?","Entonces, ¿dos cuadras y luego a la izquierda?"],["Two blocks, left, next to the coffee shop","Dos cuadras, a la izquierda, junto a la cafetería"]],4],
+ ["Yes, exactly! It's only five minutes walking.","¡Sí, exacto! Son solo cinco minutos caminando.",[["Great, is it open now?","Genial, ¿está abierto ahora?"],["Good, thank you","Qué bien, gracias"]],0],
+ ["I think it closes at five. What time is it now?","Creo que cierra a las cinco. ¿Qué hora es?",[["It is three o'clock","Son las tres"],["It is four thirty","Son las cuatro y media"]],0],
+ ["Oh good, you have time. Are you new in town?","Qué bien, tienes tiempo. ¿Eres nuevo en la ciudad?",[["Yes, I am new here","Sí, soy nuevo aquí"],["No, but I don't know this street","No, pero no conozco esta calle"]],0],
+ ["Welcome to Bozeman! It's a nice town.","¡Bienvenido a Bozeman! Es un pueblo bonito.",[["Thank you, it is very nice","Gracias, es muy bonito"],["Yes, I like it","Sí, me gusta"]],0],
+ ["Okay, good luck, young man!","¡Bueno, buena suerte, joven!",[["Thank you so much for your help","Muchas gracias por su ayuda"],["Thank you, have a nice day","Gracias, que tenga buen día"]],5]
+],
+"a2-ropa":[
+ ["Hi! Welcome. Can I help you find something?","¡Hola! Bienvenido. ¿Le ayudo a encontrar algo?",[["Yes, I am looking for a winter jacket","Sí, busco una chaqueta de invierno"],["I need a warm jacket","Necesito una chaqueta calientita"]],1],
+ ["Sure, the jackets are over here. What color do you like?","Claro, las chaquetas están por aquí. ¿Qué color le gusta?",[["I like black or blue","Me gusta el negro o el azul"],["Do you have it in gray?","¿La tiene en gris?"]],0],
+ ["This black one is very popular. Do you want to try it on?","Esta negra es muy popular. ¿Se la quiere probar?",[["Yes, where is the fitting room?","Sí, ¿dónde está el probador?"],["Yes, please","Sí, por favor"]],0],
+ ["The fitting room is over there. So, how does it fit?","El probador está allá. ¿Y qué tal le queda?",[["It is too small","Me queda muy chica"],["It is a little tight","Me queda un poco apretada"]],0],
+ ["Oh, what size do you need?","Ah, ¿qué talla necesita?",[["Do you have a large?","¿Tiene una grande?"],["I need a bigger size","Necesito una talla más grande"]],2],
+ ["Let me check... Yes! Here is a large.","Déjeme ver... ¡Sí! Aquí hay una grande.",[["Thank you, this one fits well","Gracias, esta me queda bien"],["Perfect, thank you","Perfecto, gracias"]],0],
+ ["Great! It looks good on you.","¡Genial! Se le ve bien.",[["How much is it?","¿Cuánto cuesta?"],["Is it on sale?","¿Está en oferta?"]],3],
+ ["It's one hundred and twenty dollars, but today it's twenty percent off.","Cuesta ciento veinte dólares, pero hoy tiene veinte por ciento de descuento.",[["Great, I will take it","Genial, me la llevo"],["So it is ninety six dollars?","¿Entonces son noventa y seis dólares?"]],0],
+ ["Yes! Will that be cash or card?","¡Sí! ¿Va a pagar en efectivo o con tarjeta?",[["Card, please","Con tarjeta, por favor"],["Can I pay with a card?","¿Puedo pagar con tarjeta?"]],4],
+ ["Sure, you can tap your card here.","Claro, puede acercar su tarjeta aquí.",[["Okay, done","Listo"],["Do I need to sign?","¿Necesito firmar?"]],0],
+ ["All set! Do you want a bag?","¡Listo! ¿Quiere una bolsa?",[["Yes, please","Sí, por favor"],["No, thank you","No, gracias"]],0],
+ ["Here you go. Anything else?","Aquí tiene. ¿Algo más?",[["Can I return it if I don't like it?","¿La puedo devolver si no me gusta?"],["What is the return policy?","¿Cuál es la política de devolución?"]],5],
+ ["Yes, you have thirty days with the receipt.","Sí, tiene treinta días con el recibo.",[["Perfect, thank you very much","Perfecto, muchas gracias"],["Great, have a nice day","Genial, que tenga buen día"]],0]
+],
+"a2-doctor":[
+ ["Good morning. I'm Dr. Brown. What brings you in today?","Buenos días. Soy el Dr. Brown. ¿Qué lo trae hoy?",[["I don't feel well","No me siento bien"],["I have a headache and a sore throat","Me duele la cabeza y la garganta"]],1],
+ ["I'm sorry to hear that. What hurts the most?","Lamento oír eso. ¿Qué le duele más?",[["My throat hurts a lot","Me duele mucho la garganta"],["My head hurts a lot","Me duele mucho la cabeza"]],1],
+ ["How long have you felt like this?","¿Desde cuándo se siente así?",[["Since Monday","Desde el lunes"],["For three days","Desde hace tres días"]],2],
+ ["Do you have a fever?","¿Tiene fiebre?",[["Yes, I had a fever last night","Sí, tuve fiebre anoche"],["I don't know, I feel hot","No sé, me siento caliente"]],3],
+ ["Are you taking any medicine right now?","¿Está tomando alguna medicina ahora?",[["No, I am not taking anything","No, no estoy tomando nada"],["I took some ibuprofen","Tomé ibuprofeno"]],3],
+ ["Do you have any allergies?","¿Tiene alguna alergia?",[["No, I don't have allergies","No, no tengo alergias"],["Yes, I am allergic to penicillin","Sí, soy alérgico a la penicilina"]],3],
+ ["Okay, let me check your throat. Open your mouth, please.","Bien, déjeme revisar su garganta. Abra la boca, por favor.",[["Okay","Está bien"],["Like this?","¿Así?"]],0],
+ ["Your throat is very red. I think it's an infection.","Su garganta está muy roja. Creo que es una infección.",[["Is it serious?","¿Es grave?"],["What do I need to do?","¿Qué tengo que hacer?"]],0],
+ ["It's not serious. I will give you some medicine.","No es grave. Le voy a dar una medicina.",[["How often do I take it?","¿Cada cuánto la tomo?"],["Do I take it with food?","¿La tomo con comida?"]],4],
+ ["Take one pill every eight hours, with food, for seven days.","Tome una pastilla cada ocho horas, con comida, por siete días.",[["One pill every eight hours, okay","Una pastilla cada ocho horas, está bien"],["For seven days, okay","Por siete días, está bien"]],0],
+ ["Also drink a lot of water and rest.","También tome mucha agua y descanse.",[["Can I go to work?","¿Puedo ir a trabajar?"],["Okay, I will rest","Está bien, voy a descansar"]],0],
+ ["Please stay home for two days.","Por favor quédese en casa dos días.",[["Do I need to come back?","¿Necesito regresar?"],["Should I make another appointment?","¿Debo hacer otra cita?"]],5],
+ ["Only if you don't feel better in a week. Feel better soon!","Solo si no se siente mejor en una semana. ¡Que se mejore!",[["Thank you, doctor","Gracias, doctor"],["Thank you very much, goodbye","Muchas gracias, adiós"]],0]
+],
+"a2-finde":[
+ ["Hey Angel! How was your week?","¡Hola Angel! ¿Cómo estuvo tu semana?",[["It was good but busy","Estuvo bien pero ocupada"],["It was tiring, I worked a lot","Fue cansada, trabajé mucho"]],1],
+ ["Oh yeah? What did you do yesterday?","¿Ah sí? ¿Qué hiciste ayer?",[["Yesterday I worked at the restaurant","Ayer trabajé en el restaurante"],["I studied for my class","Estudié para mi clase"]],1],
+ ["Nice. And what are you doing this weekend?","Bien. ¿Y qué vas a hacer este fin de semana?",[["I don't have plans yet","Todavía no tengo planes"],["I am free on Saturday","Estoy libre el sábado"]],0],
+ ["Cool! Do you want to do something?","¡Genial! ¿Quieres hacer algo?",[["Do you want to watch a movie?","¿Quieres ver una película?"],["Let's go hiking","Vamos de excursión"]],2],
+ ["That sounds fun! What day is good for you?","¡Suena divertido! ¿Qué día te queda bien?",[["Saturday is good for me","El sábado me queda bien"],["How about Sunday?","¿Qué tal el domingo?"]],3],
+ ["Perfect. What time?","Perfecto. ¿A qué hora?",[["At two in the afternoon","A las dos de la tarde"],["How about ten in the morning?","¿Qué tal a las diez de la mañana?"]],3],
+ ["Okay! Where do you want to meet?","¡Bueno! ¿Dónde nos vemos?",[["Let's meet at my house","Veámonos en mi casa"],["Let's meet at the coffee shop","Veámonos en la cafetería"]],4],
+ ["Great. Should we invite Mike too?","Genial. ¿Invitamos a Mike también?",[["Yes, good idea","Sí, buena idea"],["Sure, I will text him","Claro, le mando un mensaje"]],0],
+ ["Awesome. Do you want to eat something after?","Excelente. ¿Quieres comer algo después?",[["Yes, let's eat pizza","Sí, comamos pizza"],["Maybe tacos","Tal vez tacos"]],0],
+ ["I love that! Okay, I need to go now.","¡Me encanta! Bueno, ya me tengo que ir.",[["Okay, see you on Saturday","Bueno, nos vemos el sábado"],["Bye, talk to you later","Adiós, hablamos luego"]],5],
+ ["See you, man! Have a good one!","¡Nos vemos! ¡Que te vaya bien!",[["You too, bye","Igualmente, adiós"],["Thanks, bye","Gracias, adiós"]],5]
+],
+"b1-turno":[
+ ["Hi! Table for two, please.","¡Hola! Mesa para dos, por favor.",[["Welcome! Right this way, please","¡Bienvenidos! Por aquí, por favor"],["Of course, follow me please","Claro, síganme por favor"]],1],
+ ["Thank you. This place looks nice.","Gracias. Este lugar se ve bonito.",[["Thank you! Can I get you something to drink?","¡Gracias! ¿Les traigo algo de tomar?"],["Thanks! Would you like something to drink?","¡Gracias! ¿Desean algo de tomar?"]],1],
+ ["Two Thai iced teas, please. What do you recommend?","Dos tés tailandeses helados, por favor. ¿Qué nos recomienda?",[["I recommend the pad thai, it is very popular","Les recomiendo el pad thai, es muy popular"],["The green curry is my favorite","El curry verde es mi favorito"]],2],
+ ["Sounds good, but my wife is allergic to peanuts. Does the pad thai have peanuts?","Suena bien, pero mi esposa es alérgica al cacahuate. ¿El pad thai tiene cacahuate?",[["Yes, but we can make it without peanuts","Sí, pero lo podemos hacer sin cacahuate"],["Let me check with the kitchen to be safe","Déjeme preguntar en la cocina para estar seguros"]],3],
+ ["Thank you, that's very important for us.","Gracias, eso es muy importante para nosotros.",[["No problem, I will tell the chef","No hay problema, le diré al chef"],["Of course, I will write it on the order","Claro, lo anotaré en la orden"]],3],
+ ["Then one pad thai without peanuts and one green curry.","Entonces un pad thai sin cacahuate y un curry verde.",[["How spicy would you like it, from one to five?","¿Qué tan picante lo quieren, del uno al cinco?"],["Would you like it mild or spicy?","¿Lo quieren suave o picante?"]],4],
+ ["A three for me, and a one for her.","Un tres para mí, y un uno para ella.",[["Got it, a three and a one","Entendido, un tres y un uno"],["Perfect, your food will be ready soon","Perfecto, su comida estará lista pronto"]],0],
+ ["This is delicious! Can we get some more water?","¡Esto está delicioso! ¿Nos trae más agua?",[["Of course, I will bring it right away","Claro, se la traigo enseguida"],["Sure, anything else?","Claro, ¿algo más?"]],0],
+ ["We're full. We can't finish everything.","Estamos llenos. No podemos terminar todo.",[["Would you like a box?","¿Quieren una caja para llevar?"],["I can bring you a box","Les puedo traer una caja"]],5],
+ ["Yes, please. And the check, please.","Sí, por favor. Y la cuenta, por favor.",[["Here is your check","Aquí está su cuenta"],["Sure, I will be right back with the check","Claro, enseguida les traigo la cuenta"]],5],
+ ["Can we split the check?","¿Podemos dividir la cuenta?",[["Of course, how would you like to split it?","Claro, ¿cómo quieren dividirla?"],["Sure, one check each?","Claro, ¿una cuenta para cada uno?"]],0],
+ ["Thank you, you were a great server!","¡Gracias, fue un excelente mesero!",[["Thank you! Have a great night","¡Gracias! Que tengan buena noche"],["Thank you, please come again","Gracias, vuelvan pronto"]],0]
+],
+"b1-casero":[
+ ["Hello, this is Davis.","Hola, habla Davis.",[["Hi Mr. Davis, this is Angel from apartment four B","Hola señor Davis, habla Angel del apartamento cuatro B"],["Hello, this is Angel, your tenant","Hola, habla Angel, su inquilino"]],1],
+ ["Oh, hi Angel. What's going on?","Ah, hola Angel. ¿Qué pasa?",[["The heater is not working","La calefacción no funciona"],["I have a problem with the heater","Tengo un problema con la calefacción"]],1],
+ ["Hmm. Since when?","Mmm. ¿Desde cuándo?",[["It stopped working last night","Dejó de funcionar anoche"],["Since yesterday morning","Desde ayer en la mañana"]],2],
+ ["Did you check the thermostat?","¿Revisaste el termostato?",[["Yes, I already checked it","Sí, ya lo revisé"],["Yes, I changed the batteries but it still doesn't work","Sí, cambié las baterías pero sigue sin funcionar"]],2],
+ ["Well, I'm very busy this week. Can it wait until next week?","Pues, estoy muy ocupado esta semana. ¿Puede esperar hasta la próxima?",[["No, it is really urgent","No, de verdad es urgente"],["It is very cold, we can't wait","Hace mucho frío, no podemos esperar"]],3],
+ ["I understand, but my repair guy is busy too.","Entiendo, pero mi técnico también está ocupado.",[["It is ten degrees outside, it is not safe","Hace diez grados afuera, no es seguro"],["I really need someone to come soon","De verdad necesito que alguien venga pronto"]],3],
+ ["Okay, okay. Can someone come on Wednesday?","Está bien, está bien. ¿Puede ir alguien el miércoles?",[["Can it be tomorrow?","¿Puede ser mañana?"],["Wednesday is too late, how about tomorrow?","El miércoles es muy tarde, ¿qué tal mañana?"]],4],
+ ["Let me see... He can come tomorrow at nine in the morning.","Déjame ver... Puede ir mañana a las nueve de la mañana.",[["Tomorrow at nine works for me","Mañana a las nueve me queda bien"],["Perfect, I will be home","Perfecto, estaré en casa"]],4],
+ ["Great. In the meantime, do you have a space heater?","Bien. Mientras tanto, ¿tienes un calentador portátil?",[["No, I don't have one","No, no tengo"],["Yes, I have a small one","Sí, tengo uno pequeño"]],0],
+ ["I can bring you one tonight.","Te puedo llevar uno esta noche.",[["That would be great, thank you","Eso sería genial, gracias"],["Thank you, I really appreciate it","Gracias, de verdad lo aprecio"]],0],
+ ["No problem. Anything else?","No hay problema. ¿Algo más?",[["So the repair is tomorrow at nine, right?","Entonces la reparación es mañana a las nueve, ¿verdad?"],["No, that's all. See you tonight","No, es todo. Nos vemos esta noche"]],5],
+ ["Yes, tomorrow at nine. Bye, Angel.","Sí, mañana a las nueve. Adiós, Angel.",[["Thank you, bye","Gracias, adiós"],["Have a good night, bye","Que tenga buena noche, adiós"]],5]
+],
+"b1-clase":[
+ ["Hey! Did you study for the networking exam?","¡Hola! ¿Estudiaste para el examen de redes?",[["A little, but I need to study more","Un poco, pero necesito estudiar más"],["Not yet, I have been very busy","Todavía no, he estado muy ocupado"]],1],
+ ["Same here. How many classes are you taking this semester?","Yo igual. ¿Cuántas clases llevas este semestre?",[["I am taking four classes","Estoy tomando cuatro clases"],["Three, networking, security and English","Tres, redes, seguridad e inglés"]],1],
+ ["Which one do you like the most?","¿Cuál te gusta más?",[["I like security the most because it is interesting","La que más me gusta es seguridad porque es interesante"],["I think networking is the most useful","Creo que redes es la más útil"]],2],
+ ["Really? I think networking is so hard. Subnetting kills me.","¿En serio? Creo que redes es muy difícil. El subnetting me mata.",[["I agree, subnetting is difficult","Estoy de acuerdo, el subnetting es difícil"],["In my opinion, it is easy with practice","En mi opinión, es fácil con práctica"]],2],
+ ["Have you ever worked in IT?","¿Alguna vez has trabajado en IT?",[["No, I have never worked in IT, but I want to","No, nunca he trabajado en IT, pero quiero"],["I have helped with computers at my job","He ayudado con las computadoras en mi trabajo"]],3],
+ ["Cool. Have you ever built a computer?","Genial. ¿Alguna vez has armado una computadora?",[["Yes, I have built one","Sí, he armado una"],["No, I have never done that","No, nunca he hecho eso"]],3],
+ ["I'm worried about the exam. It's next Tuesday.","Me preocupa el examen. Es el próximo martes.",[["Do you want to study together?","¿Quieres que estudiemos juntos?"],["We could study together this week","Podríamos estudiar juntos esta semana"]],4],
+ ["Yes! That would help a lot. When are you free?","¡Sí! Eso ayudaría mucho. ¿Cuándo estás libre?",[["I am free on Thursday after five","Estoy libre el jueves después de las cinco"],["How about Saturday morning?","¿Qué tal el sábado en la mañana?"]],5],
+ ["That works. Where should we meet?","Me queda bien. ¿Dónde nos vemos?",[["Let's meet at the library","Veámonos en la biblioteca"],["We can meet at the coffee shop on campus","Podemos vernos en la cafetería del campus"]],5],
+ ["Perfect. Should I bring anything?","Perfecto. ¿Llevo algo?",[["Bring your notes and your laptop","Trae tus apuntes y tu laptop"],["Just bring the practice questions","Solo trae las preguntas de práctica"]],0],
+ ["Great. Oh, the professor is here. Talk later!","Genial. Ah, ya llegó el profesor. ¡Hablamos luego!",[["Okay, see you on Thursday","Bueno, nos vemos el jueves"],["Sounds good, see you later","Suena bien, nos vemos"]],0]
+],
+"b2-entrevista":[
+ ["Thanks for coming in today. Could you tell me a little about yourself?","Gracias por venir hoy. ¿Podría contarme un poco sobre usted?",[["Sure. My name is Angel and I am studying IT cybersecurity at Gallatin College","Claro. Me llamo Angel y estudio ciberseguridad en Gallatin College"],["Of course. I am a motivated IT student who loves solving problems","Claro. Soy un estudiante de IT motivado al que le encanta resolver problemas"]],1],
+ ["That's great. What experience do you have with technology?","Excelente. ¿Qué experiencia tiene con la tecnología?",[["I have built a home lab with a server and virtual machines","He armado un laboratorio en casa con un servidor y máquinas virtuales"],["At my current job I help troubleshoot the point of sale system","En mi trabajo actual ayudo a resolver problemas del sistema de punto de venta"]],2],
+ ["Interesting. Why do you want to work on a help desk?","Interesante. ¿Por qué quiere trabajar en soporte técnico?",[["I enjoy helping people and I want to grow my technical skills","Me gusta ayudar a la gente y quiero desarrollar mis habilidades técnicas"],["It is a great way to start my career in IT","Es una gran forma de empezar mi carrera en IT"]],2],
+ ["Let's try a scenario. A user calls and says they can't connect to the WiFi. What do you do?","Probemos un caso. Un usuario llama y dice que no puede conectarse al WiFi. ¿Qué hace?",[["First, I would ask if other devices can connect","Primero preguntaría si otros dispositivos pueden conectarse"],["I would check if the WiFi is turned on and restart the device","Revisaría si el WiFi está encendido y reiniciaría el dispositivo"]],3],
+ ["Good. And if that doesn't work?","Bien. ¿Y si eso no funciona?",[["Then I would forget the network and reconnect with the right password","Luego olvidaría la red y me reconectaría con la contraseña correcta"],["I would check the network settings and escalate the ticket if needed","Revisaría la configuración de red y escalaría el ticket si fuera necesario"]],3],
+ ["How do you handle a frustrated user?","¿Cómo maneja a un usuario frustrado?",[["I stay calm, listen carefully and explain each step","Mantengo la calma, escucho con atención y explico cada paso"],["I try to understand their problem and keep them updated","Trato de entender su problema y mantenerlo informado"]],0],
+ ["Tell me about a time you worked as part of a team.","Cuénteme de alguna vez que trabajó en equipo.",[["At the restaurant we work as a team on busy nights","En el restaurante trabajamos en equipo las noches con mucha gente"],["In class I worked on a project with three classmates","En clase trabajé en un proyecto con tres compañeros"]],4],
+ ["What did you learn from that experience?","¿Qué aprendió de esa experiencia?",[["I learned that communication is the key","Aprendí que la comunicación es la clave"],["I learned to ask for help when I need it","Aprendí a pedir ayuda cuando la necesito"]],4],
+ ["Where do you see yourself in five years?","¿Dónde se ve en cinco años?",[["I see myself working as a security analyst","Me veo trabajando como analista de seguridad"],["I hope to have more certifications and more responsibility","Espero tener más certificaciones y más responsabilidad"]],0],
+ ["Great. Do you have any questions for me?","Muy bien. ¿Tiene alguna pregunta para mí?",[["What does a typical day look like in this role?","¿Cómo es un día típico en este puesto?"],["What opportunities are there to grow in the company?","¿Qué oportunidades hay para crecer en la empresa?"]],5],
+ ["Good question. Our team handles about forty tickets a day, and we support training and certifications.","Buena pregunta. Nuestro equipo atiende unos cuarenta tickets al día, y apoyamos capacitación y certificaciones.",[["That sounds great, thank you for the information","Suena genial, gracias por la información"],["I really like that you support certifications","Me gusta mucho que apoyen las certificaciones"]],0],
+ ["Thanks, Angel. We'll be in touch next week.","Gracias, Angel. Le contactaremos la próxima semana.",[["Thank you for your time, I look forward to hearing from you","Gracias por su tiempo, espero saber de ustedes"],["Thank you, have a great day","Gracias, que tenga un excelente día"]],0]
+],
+"b2-cliente":[
+ ["Excuse me! My food is cold and I waited forty minutes for it!","¡Disculpe! ¡Mi comida está fría y la esperé cuarenta minutos!",[["I am so sorry about that","Lo siento mucho"],["I apologize, that should not happen","Le pido disculpas, eso no debería pasar"]],1],
+ ["This is ridiculous. I'm really hungry and I have to go back to work.","Esto es ridículo. Tengo mucha hambre y tengo que regresar al trabajo.",[["I completely understand your frustration","Entiendo completamente su frustración"],["I understand, you don't have much time","Entiendo, no tiene mucho tiempo"]],2],
+ ["So what are you going to do about it?","¿Y qué va a hacer al respecto?",[["I can bring you a fresh plate right away","Le puedo traer un plato nuevo enseguida"],["I will ask the kitchen to make it again as fast as possible","Le pediré a la cocina que lo haga otra vez lo más rápido posible"]],3],
+ ["Another forty minutes? No way!","¿Otros cuarenta minutos? ¡Ni loco!",[["It will only take about ten minutes, I promise","Solo tardará unos diez minutos, se lo prometo"],["I will tell the chef to make it first","Le diré al chef que lo haga primero"]],3],
+ ["This is the worst service I've ever had!","¡Este es el peor servicio que he tenido!",[["I hear you, and I want to make this right","Lo escucho, y quiero arreglar esto"],["I am really sorry, we are short staffed tonight","Lo siento mucho, hoy nos falta personal"]],4],
+ ["That's not my problem!","¡Ese no es mi problema!",[["You are right, it is not your problem","Tiene razón, no es su problema"],["I understand, let me take care of it for you","Entiendo, déjeme encargarme de esto"]],4],
+ ["Fine. But I'm not paying for this.","Está bien. Pero no voy a pagar esto.",[["I will take this meal off your bill","Le quitaré esta comida de la cuenta"],["Let me talk to my manager about a discount","Déjeme hablar con mi gerente sobre un descuento"]],3],
+ ["Okay... that's fair, I guess.","Bueno... supongo que es justo.",[["Thank you for your patience","Gracias por su paciencia"],["Can I bring you a drink while you wait?","¿Le traigo algo de tomar mientras espera?"]],0],
+ ["Okay, this is hot and actually really good.","Bueno, esto está caliente y la verdad muy rico.",[["I am glad you like it","Me alegra que le guste"],["Great! Is there anything else I can do for you?","¡Qué bien! ¿Hay algo más que pueda hacer por usted?"]],0],
+ ["No, I'm good. Sorry I got upset earlier.","No, estoy bien. Perdón por enojarme hace rato.",[["Don't worry, I understand","No se preocupe, lo entiendo"],["No problem at all, it happens","No hay ningún problema, pasa"]],5],
+ ["Thanks. You handled that really well.","Gracias. Lo manejó muy bien.",[["Thank you, I hope to see you again soon","Gracias, espero verlo pronto otra vez"],["Thank you, have a great rest of your day","Gracias, que tenga un excelente resto del día"]],5]
+],
+"b2-debate":[
+ ["So, what do you think is better, working from home or working in an office?","Entonces, ¿qué crees que es mejor, trabajar desde casa o en una oficina?",[["I think working from home is better","Creo que trabajar desde casa es mejor"],["In my opinion, working in an office is better","En mi opinión, trabajar en una oficina es mejor"]],1],
+ ["Really? Why do you think so?","¿En serio? ¿Por qué lo crees?",[["Because you save time and money on transportation","Porque ahorras tiempo y dinero en transporte"],["Because it is easier to communicate with your team","Porque es más fácil comunicarte con tu equipo"]],2],
+ ["Okay, but is that the only reason?","Bueno, ¿pero esa es la única razón?",[["Also, you can focus better without distractions","Además, te puedes concentrar mejor sin distracciones"],["Another reason is that you can learn from your coworkers","Otra razón es que puedes aprender de tus compañeros"]],2],
+ ["I don't agree. I think people feel lonely when they work from home.","No estoy de acuerdo. Creo que la gente se siente sola cuando trabaja desde casa.",[["I see your point, but you can still meet people after work","Entiendo tu punto, pero aún puedes conocer gente después del trabajo"],["That is true, on the other hand, you have more time for your family","Es cierto, por otro lado, tienes más tiempo para tu familia"]],3],
+ ["Hmm, maybe. But what about productivity? Some people get lazy at home.","Mmm, tal vez. ¿Pero y la productividad? Algunas personas se vuelven flojas en casa.",[["It depends on the person, some people are more productive at home","Depende de la persona, algunas son más productivas en casa"],["On the other hand, offices have a lot of interruptions","Por otro lado, las oficinas tienen muchas interrupciones"]],4],
+ ["Fair point. What about jobs like yours at the restaurant?","Buen punto. ¿Y los trabajos como el tuyo en el restaurante?",[["Of course, some jobs can't be done from home","Claro, algunos trabajos no se pueden hacer desde casa"],["That is a different situation, you need to be there in person","Esa es otra situación, tienes que estar ahí en persona"]],0],
+ ["So maybe the best option is a mix?","¿Entonces tal vez la mejor opción es una mezcla?",[["I agree, a hybrid model could be the best of both worlds","Estoy de acuerdo, un modelo híbrido podría ser lo mejor de los dos mundos"],["Maybe, but I still prefer working from home","Tal vez, pero aún prefiero trabajar desde casa"]],0],
+ ["What would you choose for your future IT job?","¿Qué elegirías para tu futuro trabajo en IT?",[["I would choose a hybrid job, two days in the office","Elegiría un trabajo híbrido, dos días en la oficina"],["I would prefer remote work so I can live anywhere","Preferiría trabajo remoto para poder vivir donde sea"]],0],
+ ["Interesting. So, what's your final conclusion?","Interesante. ¿Y cuál es tu conclusión final?",[["In conclusion, working from home is better for most people","En conclusión, trabajar desde casa es mejor para la mayoría"],["Overall, I think it depends on the job and the person","En general, creo que depende del trabajo y de la persona"]],5],
+ ["Good debate! You convinced me a little.","¡Buen debate! Me convenciste un poco.",[["Thanks, you had good arguments too","Gracias, tú también tuviste buenos argumentos"],["That was fun, let's debate again soon","Fue divertido, debatamos otra vez pronto"]],0]
+],
+"c1-ciber":[
+ ["Let's get right into it. An employee reports a suspicious email. Walk me through how you'd analyze it.","Vamos directo al grano. Un empleado reporta un correo sospechoso. Explíqueme cómo lo analizaría.",[["First, I would check the sender address and the email headers for spoofing","Primero revisaría la dirección del remitente y los encabezados para detectar suplantación"],["I would inspect the links and attachments in a sandbox without opening them directly","Inspeccionaría los enlaces y adjuntos en un sandbox sin abrirlos directamente"]],1],
+ ["Good. What specific indicators would make you confident it's phishing?","Bien. ¿Qué indicadores concretos le darían certeza de que es phishing?",[["A mismatched domain, urgent language and a link to a fake login page","Un dominio que no coincide, lenguaje urgente y un enlace a un inicio de sesión falso"],["If the reply to address is different and the link points to a newly registered domain","Si la dirección de respuesta es distinta y el enlace apunta a un dominio recién registrado"]],1],
+ ["Suppose the employee already entered their password. What now?","Supongamos que el empleado ya ingresó su contraseña. ¿Y ahora?",[["I would reset the password immediately and revoke any active sessions","Restablecería la contraseña de inmediato y revocaría las sesiones activas"],["We would follow the incident response plan, starting with containment","Seguiríamos el plan de respuesta a incidentes, empezando por la contención"]],2],
+ ["Walk me through the incident response phases.","Explíqueme las fases de respuesta a incidentes.",[["Preparation, identification, containment, eradication, recovery and lessons learned","Preparación, identificación, contención, erradicación, recuperación y lecciones aprendidas"],["We identify the scope, contain the threat, remove it, recover and document everything","Identificamos el alcance, contenemos la amenaza, la eliminamos, recuperamos y documentamos todo"]],2],
+ ["How would you determine whether other users received the same email?","¿Cómo sabría si otros usuarios recibieron el mismo correo?",[["I would search the mail logs for the same sender and subject line","Buscaría en los registros de correo el mismo remitente y asunto"],["I would use the email security tool to find and purge similar messages","Usaría la herramienta de seguridad de correo para encontrar y eliminar mensajes similares"]],2],
+ ["Let's switch gears. Tell me about a time you made a mistake at work and how you handled it.","Cambiemos de tema. Cuénteme de un error que cometió en el trabajo y cómo lo manejó.",[["Once I entered an order wrong on the POS, so I told my manager right away and fixed it","Una vez ingresé mal una orden en el POS, así que le avisé a mi gerente de inmediato y lo arreglé"],["I misconfigured a virtual machine in my lab, so I documented the issue and rebuilt it properly","Configuré mal una máquina virtual en mi laboratorio, así que documenté el problema y la reconstruí bien"]],3],
+ ["What did that teach you?","¿Qué le enseñó eso?",[["It taught me that owning your mistakes builds trust","Me enseñó que reconocer tus errores genera confianza"],["I learned to double check my work and to document every change","Aprendí a revisar dos veces mi trabajo y a documentar cada cambio"]],3],
+ ["This is an entry level role. What are your salary expectations?","Este es un puesto de nivel inicial. ¿Cuáles son sus expectativas salariales?",[["Based on my research, I am looking for something between fifty and fifty five thousand","Según mi investigación, busco algo entre cincuenta y cincuenta y cinco mil"],["I am flexible, but given the market, I was hoping for around fifty two thousand","Soy flexible, pero dado el mercado, esperaba alrededor de cincuenta y dos mil"]],4],
+ ["That's a bit higher than our range. We were thinking forty six.","Eso está un poco arriba de nuestro rango. Pensábamos en cuarenta y seis.",[["I understand. Would there be room to revisit it after my first certification?","Entiendo. ¿Habría posibilidad de revisarlo después de mi primera certificación?"],["Could we meet in the middle at forty nine, considering my hands on lab experience?","¿Podríamos llegar a un punto medio de cuarenta y nueve, considerando mi experiencia práctica?"]],4],
+ ["I think we can work with that. Any questions for me?","Creo que podemos trabajar con eso. ¿Alguna pregunta para mí?",[["How does the team measure success for a new analyst in the first ninety days?","¿Cómo mide el equipo el éxito de un analista nuevo en los primeros noventa días?"],["What does the career path look like from junior analyst to incident responder?","¿Cómo es la carrera desde analista junior hasta respondedor de incidentes?"]],5],
+ ["Great question. We'll follow up by Friday.","Gran pregunta. Le daremos respuesta antes del viernes.",[["Thank you for your time, I really enjoyed this conversation","Gracias por su tiempo, disfruté mucho esta conversación"],["I appreciate it, I am very excited about this opportunity","Se lo agradezco, me emociona mucho esta oportunidad"]],0]
+],
+"c1-carro":[
+ ["Hey, my friend! This beauty right here is a steal at fourteen thousand. Isn't she gorgeous?","¡Hola, amigo! Esta belleza es una ganga a catorce mil. ¿No está preciosa?",[["She looks nice, but how many miles does she have?","Se ve bien, pero ¿cuántas millas tiene?"],["Has this car ever been in an accident?","¿Este carro ha tenido algún accidente?"]],1],
+ ["Only ninety thousand miles, and a clean title. Runs like a dream.","Solo noventa mil millas, y título limpio. Anda de maravilla.",[["Do you have the maintenance records?","¿Tiene los registros de mantenimiento?"],["When were the tires and brakes last replaced?","¿Cuándo se cambiaron por última vez las llantas y los frenos?"]],1],
+ ["Uh, the records are somewhere around here. Want to take her for a spin?","Eh, los registros andan por aquí. ¿Quiere darle una vuelta?",[["Sure, but I noticed the tires are pretty worn out","Claro, pero noté que las llantas están bastante gastadas"],["I would like to, and I would also like my mechanic to inspect it","Me gustaría, y también quiero que mi mecánico lo revise"]],2],
+ ["So? Smooth, right?","¿Y? Suavecito, ¿verdad?",[["It drives well, but I heard a noise when I braked","Se maneja bien, pero escuché un ruido al frenar"],["Not bad, although the check engine light came on","No está mal, aunque se prendió la luz del motor"]],2],
+ ["Ah, that's nothing. Tiny thing. So, are we doing this at fourteen?","Ah, eso no es nada. Una tontería. ¿Entonces cerramos en catorce?",[["Considering the tires and the brakes, I can offer eleven thousand","Considerando las llantas y los frenos, puedo ofrecer once mil"],["Fourteen is too much for this car, I am thinking more like eleven thousand","Catorce es demasiado para este carro, pienso más bien en once mil"]],3],
+ ["Eleven? You're killing me! I can do thirteen five, final offer.","¿Once? ¡Me está matando! Puedo dejarlo en trece quinientos, oferta final.",[["I appreciate that, but my budget is twelve thousand, tops","Lo aprecio, pero mi presupuesto es de doce mil, como máximo"],["Similar cars are listed for twelve online, so I can't go higher than that","Carros similares se anuncian en doce en internet, así que no puedo pagar más"]],3],
+ ["Okay, okay. Twelve five, but you'll want our extended warranty and the paint protection package.","Está bien. Doce quinientos, pero va a querer nuestra garantía extendida y el paquete de protección de pintura.",[["No thanks, I am not interested in any add ons","No gracias, no me interesan los extras"],["I will pass on the warranty and the paint protection","Paso de la garantía y de la protección de pintura"]],4],
+ ["The warranty is only two thousand! It's a great deal!","¡La garantía cuesta solo dos mil! ¡Es una gran oferta!",[["I understand, but I would rather keep that money for repairs","Entiendo, pero prefiero guardar ese dinero para reparaciones"],["That is a hard no on the warranty, I am afraid","Me temo que es un no rotundo a la garantía"]],4],
+ ["Alright, no extras. Twelve five, out the door?","Bueno, sin extras. ¿Doce quinientos, todo incluido?",[["If you can make it twelve flat with new brakes, we have a deal","Si lo deja en doce cerrados con frenos nuevos, trato hecho"],["Twelve thousand including taxes and fees, and we can sign today","Doce mil incluyendo impuestos y cargos, y firmamos hoy"]],5],
+ ["You drive a hard bargain! Twelve it is.","¡Sí que sabe negociar! Doce entonces.",[["Great, can we put everything in writing?","Genial, ¿podemos poner todo por escrito?"],["Perfect, I will need the inspection report before I sign","Perfecto, necesito el reporte de inspección antes de firmar"]],5],
+ ["Of course, let me get the paperwork.","Claro, déjeme traer los papeles.",[["Thanks, it was a pleasure doing business with you","Gracias, fue un placer hacer negocios con usted"],["Sounds good, I appreciate your flexibility","Suena bien, aprecio su flexibilidad"]],0]
+],
+"c1-charla":[
+ ["So tell me, Angel, do you lose sleep over AI stealing your job one day?","Dime, Angel, ¿te quita el sueño que la IA te robe el trabajo algún día?",[["Not really, although I do think some jobs will change a lot","No mucho, aunque sí creo que algunos trabajos cambiarán bastante"],["It is not so much that I am worried, it is more that I want to be prepared","No es tanto que esté preocupado, sino que quiero estar preparado"]],1],
+ ["Prepared how? Tell me what that looks like for you.","¿Preparado cómo? Cuéntame cómo es eso para ti.",[["For example, I am studying cybersecurity because someone will always need to protect these systems","Por ejemplo, estudio ciberseguridad porque siempre se necesitará a alguien que proteja estos sistemas"],["In my case, I am learning to use AI tools instead of competing with them","En mi caso, estoy aprendiendo a usar herramientas de IA en lugar de competir con ellas"]],2],
+ ["Ah, if you can't beat them, join them. But what about a waiter? Could a robot replace you at the restaurant?","Ah, si no puedes vencerlos, úneteles. ¿Pero y un mesero? ¿Te podría reemplazar un robot en el restaurante?",[["Maybe in theory, but people come for the human connection, not just the food","Tal vez en teoría, pero la gente viene por la conexión humana, no solo por la comida"],["I doubt it, a robot can't read a table the way a person can","Lo dudo, un robot no puede leer una mesa como una persona"]],1],
+ ["Hmm, I'd argue most customers just want their food fast and cheap.","Mmm, yo diría que la mayoría de los clientes solo quieren su comida rápida y barata.",[["I am not so sure about that, otherwise nobody would tip","No estoy tan seguro de eso, si no nadie dejaría propina"],["With all due respect, I think that is an oversimplification","Con todo respeto, creo que eso es simplificar demasiado"]],4],
+ ["Touché. So what makes work meaningful, if not just the paycheck?","Touché. ¿Entonces qué le da sentido al trabajo, si no es solo el sueldo?",[["For me, it is knowing that what I do actually makes a difference","Para mí, es saber que lo que hago realmente marca una diferencia"],["It is the feeling of growing and solving problems that matter","Es la sensación de crecer y resolver problemas que importan"]],1],
+ ["Spoken like a true idealist. Don't you think that's a luxury not everyone can afford?","Dicho como un verdadero idealista. ¿No crees que es un lujo que no todos se pueden dar?",[["That is a fair point, but even a hard job can have meaning","Es un punto válido, pero incluso un trabajo difícil puede tener sentido"],["Admittedly, yes, but that is exactly why technology should free up our time","Hay que admitir que sí, pero justo por eso la tecnología debería liberar nuestro tiempo"]],4],
+ ["So you're optimistic? Or are we all just whistling in the dark?","¿Entonces eres optimista? ¿O solo nos estamos engañando?",[["I am cautiously optimistic, it is not all doom and gloom","Soy cautelosamente optimista, no todo es pesimismo"],["Let's not jump the gun, the jury is still out","No nos adelantemos, todavía no hay veredicto"]],3],
+ ["Ha! Nice. And what would you tell a young person choosing a career today?","¡Ja! Bien dicho. ¿Y qué le dirías a un joven que elige carrera hoy?",[["I would tell them to learn the fundamentals and stay curious","Les diría que aprendan lo básico y se mantengan curiosos"],["Don't put all your eggs in one basket, learn skills that transfer","No pongan todos los huevos en una sola canasta, aprendan habilidades transferibles"]],3],
+ ["Wise words. So, to wrap up, where do you land on all this?","Sabias palabras. Para cerrar, ¿cuál es tu postura final en todo esto?",[["All in all, AI will change work, but people who adapt will thrive","En resumen, la IA cambiará el trabajo, pero la gente que se adapte prosperará"],["At the end of the day, technology is a tool, and it is up to us how we use it","Al final del día, la tecnología es una herramienta, y depende de nosotros cómo la usamos"]],5],
+ ["I couldn't have said it better myself. Same time next week?","No lo podría haber dicho mejor. ¿Misma hora la próxima semana?",[["Absolutely, I am looking forward to it","Por supuesto, tengo muchas ganas"],["Count me in, it was a pleasure","Cuenta conmigo, fue un placer"]],0]
+]
+};
+
+/* =========================================================
+   LABORATORIOS: conversaciones largas con misión
+   ========================================================= */
+const LV_CODES=["A1","A2","B1","B2","C1"];
+const LABS=[
+ [ // A1
+  {id:"a1-vecino",ico:"🏡",title:"Tu vecino nuevo",mission:"Conoce a Emma, tu nueva vecina.",who:"Emma",av:"👩‍🦰",voice:"airy",
+   persona:"Emma, a friendly young woman who just moved in next door to Angel.",scenario:"Emma just moved into the apartment next to Angel. They meet in the hallway.",start:"Say hi and introduce yourself as the new neighbor.",
+   goals:["Saluda y di tu nombre","Di dónde vives o de dónde eres","Di en qué trabajas o qué estudias","Hazle una pregunta a Emma","Despídete"]},
+  {id:"a1-cafe",ico:"☕",title:"Pide en un café",mission:"Pide algo de comer y tomar en un café.",who:"Barista Joe",av:"🧑‍🍳",voice:"rounded",
+   persona:"Joe, a cheerful barista at a small coffee shop.",scenario:"Angel walks into Joe's coffee shop to order.",start:"Greet the customer and ask what he wants.",
+   goals:["Saluda","Pide una bebida","Pide algo de comer","Pregunta cuánto cuesta","Da las gracias"]},
+  {id:"a1-perdido",ico:"🗺️",title:"Perdido en la ciudad",mission:"Pide ayuda para llegar a un lugar.",who:"Linda",av:"👵",voice:"rounded",
+   persona:"Linda, a kind older woman walking in downtown.",scenario:"Angel is lost downtown and stops Linda to ask for help. Give simple directions; sometimes speak a little fast so he has to ask you to repeat.",start:"Angel looks lost. Ask him if he needs help.",
+   goals:["Di que estás perdido o que necesitas ayuda","Pregunta dónde está un lugar","Di que no entiendes o pide que repita","Repite la dirección para confirmar","Da las gracias"]}
+ ],
+ [ // A2
+  {id:"a2-ropa",ico:"👕",title:"En la tienda de ropa",mission:"Compra una chaqueta para el invierno.",who:"Sara",av:"🙋‍♀️",voice:"airy",
+   persona:"Sara, a helpful clerk at a clothing store.",scenario:"Angel is shopping for a winter jacket. The first one is too small and too expensive.",start:"Welcome him to the store and ask if he needs help.",
+   goals:["Di qué buscas","Pide otra talla","Pregunta el precio o si hay descuento","Paga con tarjeta","Pregunta si puedes devolverla"]},
+  {id:"a2-doctor",ico:"🩺",title:"Cita con el doctor",mission:"Explica al doctor cómo te sientes.",who:"Dr. Brown",av:"👨‍⚕️",voice:"glassy",
+   persona:"Dr. Brown, a calm and friendly family doctor.",scenario:"Angel has a medical appointment because he has felt sick for a few days.",start:"Greet the patient and ask what brings him in today.",
+   goals:["Explica qué te duele","Di desde cuándo","Responde a sus preguntas","Pregunta por la medicina","Pregunta si necesitas regresar"]},
+  {id:"a2-finde",ico:"🎉",title:"Planes de fin de semana",mission:"Haz planes con un amigo para el sábado.",who:"Jake",av:"👨‍🍳",voice:"rounded",
+   persona:"Jake, Angel's fun friend who always has ideas.",scenario:"Jake calls Angel to make plans for the weekend.",start:"Ask Angel how his week was.",
+   goals:["Cuenta qué hiciste ayer o esta semana","Propón una actividad","Acuerden un día y una hora","Acuerden dónde verse","Despídete"]}
+ ],
+ [ // B1
+  {id:"b1-turno",ico:"🍜",title:"Turno en el restaurante",mission:"Atiende una mesa de principio a fin. Tú eres el mesero.",who:"Tom (cliente)",av:"🧔",voice:"glassy",
+   persona:"Tom, a customer at a Thai restaurant with his wife. He asks many questions and has a peanut allergy.",scenario:"Angel is the server. Tom arrives, orders, mentions his peanut allergy, later asks for a box and the check.",start:"You just sat down. Say hello to the server and ask for drinks.",
+   goals:["Da la bienvenida y ofrece bebidas","Recomienda un plato","Maneja la alergia","Pregunta qué tan picante lo quiere","Ofrece caja y trae la cuenta"]},
+  {id:"b1-casero",ico:"🔧",title:"Llamada al casero",mission:"Reporta un problema en tu apartamento.",who:"Mr. Davis",av:"👨‍💼",voice:"glassy",
+   persona:"Mr. Davis, a busy landlord who tries to delay repairs.",scenario:"Angel calls his landlord because the heater stopped working in winter.",start:"Answer the phone: 'Hello, this is Davis.'",
+   goals:["Preséntate y explica el problema","Da detalles (desde cuándo, qué pasa)","Insiste en que es urgente","Acuerden un día para la reparación","Confirma y despídete"]},
+  {id:"b1-clase",ico:"🎓",title:"Compañero de clase",mission:"Platica con un compañero y organicen estudiar juntos.",who:"Mike",av:"👨‍💻",voice:"glassy",
+   persona:"Mike, a classmate in Angel's IT course at college.",scenario:"Before class starts, Mike sits next to Angel. There is a big exam next week.",start:"Say hi and ask if he studied for the exam.",
+   goals:["Habla de tus clases","Da tu opinión sobre una clase o tema","Cuenta una experiencia (present perfect)","Propón estudiar juntos","Acuerden día, hora y lugar"]}
+ ],
+ [ // B2
+  {id:"b2-entrevista",ico:"💼",title:"Entrevista de help desk",mission:"Consigue el trabajo de soporte técnico.",who:"Karen (entrevistadora)",av:"👩‍💼",voice:"buttery",
+   persona:"Karen, an IT manager interviewing candidates for a help desk technician job. Professional and friendly but asks follow-up questions.",scenario:"Job interview for an entry-level IT help desk position. Ask about experience, a hypothetical ticket (user can't connect to wifi), teamwork, and why this job.",start:"Welcome the candidate and ask him to tell you about himself.",
+   goals:["Preséntate profesionalmente","Habla de tu experiencia o estudios","Explica cómo resolverías un problema técnico","Habla de trabajo en equipo","Haz una pregunta a la entrevistadora"]},
+  {id:"b2-cliente",ico:"😠",title:"Cliente molesto",mission:"Calma a un cliente enojado y resuelve el problema.",who:"Rick (cliente)",av:"😤",voice:"rounded",
+   persona:"Rick, an annoyed customer whose food arrived cold and late. He is upset but can be calmed down with good service.",scenario:"Angel is the server. Rick complains about cold food and slow service.",start:"Complain to the server that your food is cold and you waited 40 minutes.",
+   goals:["Discúlpate de forma profesional","Muestra que entiendes su frustración","Ofrece una solución concreta","Mantén la calma si se enoja más","Cierra la conversación de forma positiva"]},
+  {id:"b2-debate",ico:"⚖️",title:"Debate: ¿remoto u oficina?",mission:"Defiende tu postura en un debate amistoso.",who:"Emma",av:"👩‍🦰",voice:"airy",
+   persona:"Emma, a smart friend who loves to debate. She takes the opposite side of whatever Angel says and pushes back with good arguments.",scenario:"Friendly debate: is remote work better than working in an office?",start:"Ask Angel which he prefers, remote work or office work, and why.",
+   goals:["Da tu postura clara","Da al menos dos argumentos","Responde a un contraargumento","Usa una expresión como 'on the other hand' o 'I see your point, but'","Da una conclusión"]}
+ ],
+ [ // C1
+  {id:"c1-ciber",ico:"🛡️",title:"Entrevista técnica de ciberseguridad",mission:"Pasa una entrevista técnica para analista SOC.",who:"David (CISO)",av:"🧑‍💼",voice:"glassy",
+   persona:"David, a demanding Chief Information Security Officer interviewing for a junior SOC analyst role. Asks probing technical and behavioral questions and follow-ups.",scenario:"Technical interview: phishing analysis, incident response steps, a behavioral question (STAR method), and salary expectations.",start:"Introduce yourself briefly and ask how he would analyze a suspicious email reported by an employee.",
+   goals:["Explica cómo analizarías un correo de phishing","Describe los pasos de respuesta a incidentes","Responde una pregunta de comportamiento con un ejemplo","Negocia tu expectativa salarial","Cierra con una pregunta inteligente"]},
+  {id:"c1-carro",ico:"🚗",title:"Negocia un carro",mission:"Compra un carro usado al mejor precio.",who:"Vince (vendedor)",av:"🕴️",voice:"rounded",
+   persona:"Vince, a smooth, persuasive used car salesman who uses pressure tactics and fast talk.",scenario:"Angel is buying a used car. The price is 14,000 dollars. Vince resists discounts and pushes extras.",start:"Greet Angel enthusiastically and tell him this car is a great deal at 14,000.",
+   goals:["Haz preguntas sobre el carro","Señala un problema para bajar el precio","Haz una contraoferta","Rechaza extras que no quieres","Cierra el trato o retírate con educación"]},
+  {id:"c1-charla",ico:"🧠",title:"Charla profunda",mission:"Ten una conversación de ideas con matices.",who:"Prof. Allen",av:"👨‍🏫",voice:"buttery",
+   persona:"Allen, a witty philosophy professor who enjoys deep conversations, irony and challenging ideas.",scenario:"A deep conversation about whether AI will replace human jobs and what makes work meaningful.",start:"Ask Angel, with a bit of humor, whether he thinks AI will take his job one day.",
+   goals:["Da una opinión con matices (no solo sí o no)","Usa un ejemplo personal","Usa una expresión idiomática","Cuestiona algo que diga el profesor","Resume tu punto de vista final"]}
+ ]
+];
+/* =========================================================
+   CAPACIDADES (voz, micrófono, IA)
+   ========================================================= */
+const $=s=>document.querySelector(s);
+let tts=null,dict=null,ai=null;
+/* ---- Micrófono: reconocimiento de voz del navegador (Safari en iPhone, Chrome en Android) ---- */
+function makeDictation(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR) return null;
+  let rec=null,cbP=()=>{},cbF=()=>{},cbS=()=>{},stopRes=null,userStop=false;
+  return {
+    onPartial(f){cbP=f}, onFinal(f){cbF=f}, onState(f){cbS=f},
+    start(){ return new Promise((resolve,reject)=>{
+      try{ if("speechSynthesis" in window) speechSynthesis.cancel(); }catch(e){}
+      userStop=false; rec=new SR(); rec.lang="en-US"; rec.interimResults=true; rec.continuous=true; rec.maxAlternatives=1;
+      let started=false;
+      rec.onstart=()=>{ started=true; cbS({state:"listening"}); resolve(); };
+      rec.onresult=e=>{ let interim=""; for(let i=e.resultIndex;i<e.results.length;i++){ const r=e.results[i]; if(r.isFinal) cbF({text:r[0].transcript.trim()}); else interim+=r[0].transcript; } cbP({text:interim.trim()}); };
+      rec.onerror=e=>{ if(!started){ reject({code:(e.error==="not-allowed"||e.error==="service-not-allowed")?"not_granted":"error"}); } };
+      rec.onend=()=>{ cbS({state:"idle",reason:userStop?"stopped":"ended"}); if(stopRes){stopRes();stopRes=null;} rec=null; };
+      try{ rec.start(); }catch(err){ reject({code:"error"}); }
+    }); },
+    stop(){ return new Promise(res=>{ if(!rec){res();return;} userStop=true; stopRes=res; try{rec.stop();}catch(e){res();} setTimeout(()=>{ if(stopRes){stopRes();stopRes=null;} },1800); }); }
+  };
+}
+/* ---- IA opcional: clave GRATIS de Google Gemini (o de Anthropic), guardada solo en este teléfono ---- */
+const KEY_NAME="speakup-api-key";
+const getKey=()=>{ try{ return localStorage.getItem(KEY_NAME)||""; }catch(e){ return ""; } };
+const GEMINI_MODELS=["gemini-flash-latest","gemini-flash-lite-latest","gemini-2.5-flash"];
+function makeAI(){
+  const key=getKey(); if(!key) return null;
+  async function gemini(input,json){
+    let lastErr=null;
+    for(const m of GEMINI_MODELS){
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`,{method:"POST",
+        headers:{"content-type":"application/json","x-goog-api-key":key},
+        body:JSON.stringify({contents:[{role:"user",parts:[{text:String(input)}]}],generationConfig:json?{responseMimeType:"application/json",temperature:0.8}:{temperature:0.8}})});
+      if(r.status===404||r.status===400&&/model/i.test(await r.clone().text())){ lastErr={code:"no_model"}; continue; }
+      if(r.status===429) throw {code:"rate_limited"};
+      if(r.status===401||r.status===403) throw {code:"bad_key"};
+      if(!r.ok) throw {code:"error",message:await r.text()};
+      const j=await r.json();
+      const text=((j.candidates||[])[0]?.content?.parts||[]).map(p=>p.text||"").join("");
+      return {text,truncated:false};
+    }
+    throw lastErr||{code:"error"};
+  }
+  async function anthropic(input,opts){
+    const model=opts.modelTier==="default"?"claude-sonnet-5-5":"claude-haiku-5-5";
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",
+      headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model,max_tokens:1500,messages:[{role:"user",content:String(input)}]})});
+    if(r.status===429) throw {code:"rate_limited"};
+    if(r.status===401) throw {code:"bad_key"};
+    if(!r.ok) throw {code:"error",message:await r.text()};
+    const j=await r.json();
+    return {text:(j.content||[]).map(c=>c.text||"").join(""),truncated:j.stop_reason==="max_tokens"};
+  }
+  const call=(i,o={},json=false)=>key.startsWith("sk-ant")?anthropic(i,o):gemini(i,json);
+  const f=(i,o)=>call(i,o||{});
+  f.json=async(i,o)=>{ const {text}=await call(i+"\n\nRespond with valid JSON only. No code fences, no extra text.",o||{},true); const m=text.match(/\{[\s\S]*\}/); return JSON.parse(m?m[0]:text); };
+  return f;
+}
+function setupCaps(){
+  dict=makeDictation(); ai=makeAI();
+  if(dict) wireDict();
+  const m=[];
+  if(!dict) m.push("🎤 Este navegador no deja usar el micrófono. En iPhone abre la app en <b>Safari</b>; en Android, en <b>Chrome</b>.");
+  if(IOS) m.push("🔇 ¿No se oye? Quita el <b>modo silencio</b> del iPhone y sube el volumen.");
+  if(!ai) m.push(`✅ Todo funciona sin clave. Si quieres conversaciones libres con IA, toca <button class="say" id="openSet">⚙️ Ajustes</button> (es gratis con Google).`);
+  const n=$("#notice"); n.innerHTML=m.join("<br><br>"); n.style.display=m.length?"block":"none";
+  const os=$("#openSet"); if(os) os.onclick=openSettings;
+  document.querySelectorAll(".mic").forEach(b=>{ b.disabled=!dict; });
+}
+function openSettings(){
+  const o=document.createElement("div"); o.className="party"; o.style.background="rgba(43,42,51,.55)";
+  const k=getKey();
+  o.innerHTML=`<div class="party-card" style="text-align:left;max-height:90vh;overflow:auto"><h2>⚙️ Ajustes</h2>
+   <p style="font-size:15px">Todo funciona <b>gratis y sin clave</b>: lecciones, palabras, ~50,000 frases, conversaciones guiadas y corrección de pronunciación.</p>
+   <p style="font-size:15px"><b>Opcional:</b> para conversar <b>libremente</b> con la IA (amigos, laboratorios libres y consejos), pega una clave <b>gratis de Google Gemini</b>:</p>
+   <ol style="font-size:14px;padding-left:20px;margin:6px 0">
+     <li>Entra a <b>aistudio.google.com</b> con tu cuenta de Google.</li>
+     <li>Toca <b>Get API key</b> → <b>Create API key</b>.</li>
+     <li>Copia la clave (empieza con <b>AIza</b>) y pégala aquí.</li></ol>
+   <p style="font-size:13px;color:var(--muted)">No pide tarjeta. Tiene un límite diario, y en el plan gratis Google puede usar lo que hablas para mejorar sus productos. La clave se guarda solo en este teléfono.</p>
+   <input id="keyIn" type="password" placeholder="AIza..." value="${esc(k)}" style="width:100%;font:700 16px Nunito;padding:12px;border-radius:14px;border:2px solid var(--line);margin:6px 0 12px">
+   <div class="row"><button class="btn white" id="keyDel">Borrar clave</button><button class="btn" id="keySave">Guardar</button></div>
+   <button class="btn blue full" id="keyTest" style="margin-top:10px">Probar la IA</button>
+   <div id="keyMsg" style="font-size:14px;margin-top:8px"></div>
+   <button class="btn white full" id="keyClose" style="margin-top:10px">Cerrar</button></div>`;
+  document.body.appendChild(o);
+  const close=()=>{ o.remove(); setupCaps(); };
+  const saveK=()=>{ try{ const v=o.querySelector("#keyIn").value.trim(); if(v) localStorage.setItem(KEY_NAME,v); else localStorage.removeItem(KEY_NAME); }catch(e){} };
+  o.querySelector("#keySave").onclick=()=>{ saveK(); close(); };
+  o.querySelector("#keyDel").onclick=()=>{ try{ localStorage.removeItem(KEY_NAME); }catch(e){} close(); };
+  o.querySelector("#keyClose").onclick=close;
+  o.querySelector("#keyTest").onclick=async()=>{
+    saveK(); const t=makeAI(), msg=o.querySelector("#keyMsg");
+    if(!t){ msg.textContent="Primero pega una clave."; return; }
+    msg.innerHTML='<span class="spin"></span> Probando…';
+    try{ const r=await t.json('Say hello to Angel in one short English sentence. Return JSON: {"text":""}'); msg.innerHTML="✅ ¡Funciona! La IA dijo: <b>"+esc(r.text||"")+"</b>"; }
+    catch(e){ msg.innerHTML="❌ No funcionó"+(e&&e.code==="bad_key"?": la clave no es válida.":e&&e.code==="rate_limited"?": llegaste al límite, intenta más tarde.":". Revisa la clave."); }
+  };
+}
+/* ---------- Voz del teléfono (iPhone, Safari, app de Claude en celular) ---------- */
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const HAS_WEB_TTS="speechSynthesis" in window;
+let VOICES={en:null,es:null};
+function pickVoices(){
+  if(!HAS_WEB_TTS) return;
+  const vs=speechSynthesis.getVoices(); if(!vs.length) return;
+  const find=(re,pref)=>vs.find(v=>re.test(v.lang)&&pref.some(p=>v.name.includes(p)))||vs.find(v=>re.test(v.lang));
+  VOICES.en=find(/^en[-_]US/i,["Samantha","Ava","Allison","Google US"])||find(/^en/i,[]);
+  VOICES.es=find(/^es[-_](US|MX)/i,["Paulina","Mónica","Google"])||find(/^es/i,[]);
+}
+if(HAS_WEB_TTS){ pickVoices(); speechSynthesis.onvoiceschanged=pickVoices; }
+let webUnlocked=false;
+function unlockWebTTS(){
+  if(webUnlocked||!HAS_WEB_TTS) return; webUnlocked=true;
+  try{ const u=new SpeechSynthesisUtterance(" "); u.volume=0; speechSynthesis.speak(u); }catch(e){}
+}
+["pointerdown","touchstart","click"].forEach(ev=>document.addEventListener(ev,unlockWebTTS,{capture:true,passive:true}));
+
+function webSay(lines){
+  if(!HAS_WEB_TTS) return Promise.resolve();
+  if(speechSynthesis.speaking||speechSynthesis.pending) speechSynthesis.cancel();
+  if(!VOICES.en) pickVoices();
+  // Se ponen en cola todas juntas (iOS solo deja hablar si se pide durante el toque)
+  return Promise.all(lines.map(l=>new Promise(res=>{
+    const u=new SpeechSynthesisUtterance(l.text);
+    const es=l.lang==="es"; u.lang=es?"es-US":"en-US";
+    const v=es?VOICES.es:VOICES.en; if(v) u.voice=v;
+    u.rate=Math.max(0.5,Math.min(1.2,(l.rate||0.85)*(IOS?1:1)));
+    let done=false; const fin=()=>{ if(!done){done=true;res();} };
+    u.onend=fin; u.onerror=fin; setTimeout(fin,1500+l.text.length*140);
+    speechSynthesis.speak(u);
+  })));
+}
+
+async function speak(text,rate=0.85,voice){
+  if(tts){ try{ await tts.speak(text,voice?{language:"en",rate,voice}:{language:"en",rate}); return; }catch(e){ const c=(e&&e.code)||""; if(c==="busy"||/stop|cancel|not_granted|rate/.test(c)) return; } }
+  return webSay([{text,lang:"en",rate}]);
+}
+
+async function speakLines(lines){
+  if(tts){
+    try{ await tts.speak(lines.map(l=>{const o={text:l.text,language:l.lang||"en",rate:l.rate||0.85}; if(l.voice) o.voice=l.voice; return o;})); return; }
+    catch(e){ const c=(e&&e.code)||""; if(c==="busy"||/stop|cancel|not_granted|rate/.test(c)) return; }
+  }
+  return webSay(lines);
+}
+function corrLines(errs,full){
+  const L=[{text:"Ojo, eso no se pronuncia así.",lang:"es"}];
+  errs.slice(0,2).forEach(e=>{
+    if(e.said) L.push({text:"Dijiste",lang:"es"},{text:e.said,lang:"en"},{text:"pero se dice",lang:"es"},{text:e.want,lang:"en",rate:0.7});
+    else L.push({text:"Te faltó decir",lang:"es"},{text:e.want,lang:"en",rate:0.7});
+  });
+  if(full) L.push({text:"Repite conmigo.",lang:"es"},{text:full,lang:"en",rate:0.75});
+  return L;
+}
+let micCtx=null,finals=[],partial="";
+function wireDict(){
+  dict.onPartial(({text})=>{ partial=text; if(micCtx) micCtx.live.textContent=[...finals,text].join(" "); });
+  dict.onFinal(({text})=>{ finals.push(text); partial=""; if(micCtx) micCtx.live.textContent=finals.join(" "); });
+  dict.onState(({state,reason})=>{
+    if(!micCtx) return;
+    micCtx.btn.classList.toggle("live",state==="listening");
+    if(state==="idle"&&reason==="ended"&&!micCtx.stopping){ micCtx.stopping=true; micCtx.done([...finals,partial].join(" ").trim()); }
+  });
+}
+function micClick(ctx){
+  if(!dict) return;
+  if(ctx.btn.classList.contains("live")){
+    ctx.label.textContent="Procesando…"; ctx.stopping=true;
+    dict.stop().then(()=>{ ctx.btn.classList.remove("live"); ctx.done([...finals,partial].join(" ").trim()); }).catch(()=>{});
+    return;
+  }
+  if(tts) try{ tts.stop(); }catch(e){}
+  micCtx=ctx; ctx.stopping=false; finals=[]; partial=""; ctx.live.textContent="";
+  dict.start().catch(e=>{
+    ctx.btn.classList.remove("live");
+    ctx.label.textContent=e&&e.code==="not_granted"?"No diste permiso al micrófono 😕":"No se pudo abrir el micrófono, intenta otra vez";
+  });
+  ctx.btn.classList.add("live");
+  ctx.label.textContent="Te escucho… toca otra vez cuando termines";
+}
+const MIC_SVG=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2Z"/></svg>`;
+
+/* =========================================================
+   PROGRESO: XP, racha, meta diaria (sin vidas)
+   ========================================================= */
+const GOAL=50;
+let P={xp:0,done:{},words:{},streak:0,last:"",today:"",todayXp:0,labs:{},seen:[]};
+try{ Object.assign(P,JSON.parse(localStorage.getItem("speakup-v3"))||{}); }catch(e){}
+const dayStr=d=>d.toISOString().slice(0,10);
+function save(){ try{ localStorage.setItem("speakup-v3",JSON.stringify(P)); }catch(e){} }
+function addXP(n){
+  const today=dayStr(new Date());
+  if(P.today!==today){ P.today=today; P.todayXp=0; }
+  if(P.last!==today){
+    const y=new Date(); y.setDate(y.getDate()-1);
+    P.streak = P.last===dayStr(y) ? P.streak+1 : 1; P.last=today;
+  }
+  P.xp+=n; P.todayXp+=n; save(); renderStats();
+}
+function renderStats(){
+  const today=dayStr(new Date());
+  const y=new Date(); y.setDate(y.getDate()-1);
+  const streak=(P.last===today||P.last===dayStr(y))?P.streak:0;
+  const tx=P.today===today?P.todayXp:0;
+  $("#streak").textContent=streak; $("#xp").textContent=P.xp;
+  $("#goalFill").style.width=Math.min(100,tx/GOAL*100)+"%";
+  $("#goalTxt").textContent=Math.min(tx,GOAL)+"/"+GOAL+(tx>=GOAL?" ✅":"");
+}
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+let tab="path";
+function show(id){
+  ["tab-path","tab-words","tab-friends","play","chatView"].forEach(s=>$("#"+s).classList.toggle("hidden",s!==id));
+  const inside=id==="play"||id==="chatView";
+  document.body.classList.toggle("lessonmode",inside);
+  $("#statsBar").classList.toggle("hidden",inside);
+  window.scrollTo(0,0);
+}
+function openTab(t){
+  tab=t; if(tts) try{tts.stop();}catch(e){}
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  if(t==="path") renderPath(); if(t==="words") renderWords(); if(t==="friends") renderFriends();
+  show("tab-"+t);
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>openTab(b.dataset.tab));
+document.addEventListener("click",e=>{
+  const se=e.target.closest("[data-es]"); if(se) speakLines([{text:se.dataset.es,lang:"es",rate:0.95}]);
+  const s=e.target.closest("[data-say]"); if(s) speak(s.dataset.say,s.dataset.rate?parseFloat(s.dataset.rate):0.85,s.dataset.voice);
+});
+$("#quit").onclick=()=>openTab(tab);
+$("#chatBack").onclick=()=>openTab(CH&&CH.lab?"path":"friends");
+
+/* =========================================================
+   CAMINO (estilo Duolingo, sin vidas)
+   ========================================================= */
+function renderPath(){
+  renderStats();
+  let html="", zig=[0,1,2,1,0,-1,-2,-1], k=0;
+  LEVELS.forEach((L,li)=>{
+    const ls=LESSONS.filter(l=>l.level===li), d=ls.filter(l=>P.done[l.key]).length;
+    const openKey=(ls.find(l=>!P.done[l.key])||{}).key;
+    html+=`<div class="level" id="lv${li}" style="background:${L.color}">${L.name} <span style="float:right">${d}/${ls.length}</span><small>${L.desc}</small></div>`;
+    L.units.forEach(uid=>{
+      html+=`<div class="unitname">${UNITS[uid].ico} ${UNITS[uid].name}</div><div class="path">`;
+      LESSONS.forEach((les,i)=>{
+        if(les.unit!==uid) return;
+        const st=P.done[les.key]?"done":(les.key===openKey?"open":"locked");
+        const off=zig[k++%zig.length]*20;
+        const icon=st==="done"?"⭐":st==="open"?"▶":"🔒";
+        html+=`<button class="node ${st} ${off>0?"r":""}" style="margin-left:${off*2}px" data-les="${i}" ${st==="locked"?"disabled":""}>
+          ${st==="open"?'<span class="start-tag">EMPEZAR</span>':""}${icon}
+          <span class="lbl">Lección ${les.n}</span></button>`;
+      });
+      html+=`</div>`;
+    });
+    html+=`<div class="unitname" style="margin-bottom:12px">🧪 Laboratorios ${LV_CODES[li]} · conversaciones largas</div>`+
+      LABS[li].map((lab,j)=>{ const b=(P.labs||{})[lab.id];
+        return `<button class="big" data-lab="${li}-${j}"><div class="ico" style="background:var(--soft-purple)">${lab.ico}</div><div><b>${esc(lab.title)}</b><small>${esc(lab.mission)}</small></div><div class="right">${b!=null?"🏆 "+b:"Nuevo"}</div></button>`; }).join("")+
+      `<button class="big" data-inf="${li}" style="border-color:var(--yellow)"><div class="ico" style="background:var(--soft-yellow)">♾️</div><div><b>Práctica infinita ${LV_CODES[li]}</b><small>${GEN.count(li).toLocaleString("es")} frases de este nivel. Nunca se acaba, y funciona sin internet.</small></div></button>`;
+  });
+  const jump=`<div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px">${LEVELS.map((L,li)=>`<button class="chip" style="color:#fff;background:${L.color};border-color:${L.color};cursor:pointer;flex:none" data-jump="${li}">${L.name.split(" · ")[0]}</button>`).join("")}</div>`;
+  $("#pathList").innerHTML=jump+`<p class="sub" style="font-size:15px">Empieza en el nivel que quieras. Las lecciones se desbloquean en orden; los 🧪 laboratorios y la ♾️ práctica infinita siempre están abiertos.</p>`+html;
+  document.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>$("#lv"+b.dataset.jump).scrollIntoView({behavior:"smooth"}));
+  document.querySelectorAll("[data-les]").forEach(b=>b.onclick=()=>startLesson(+b.dataset.les));
+  document.querySelectorAll("[data-lab]").forEach(b=>b.onclick=()=>{ const [li,j]=b.dataset.lab.split("-").map(Number); openLab(li,j); });
+  document.querySelectorAll("[data-inf]").forEach(b=>b.onclick=()=>startInfinite(+b.dataset.inf));
+}
+
+/* =========================================================
+   MOTOR DE EJERCICIOS
+   ========================================================= */
+let Q=[],qi=0,run=null; // run: {kind, title, gained, correct, total, onFinish}
+function startRun(queue,meta){ Q=queue; qi=0; run=Object.assign({gained:0,correct:0,total:queue.length},meta); show("play"); nextQ(); }
+function nextQ(){
+  $("#pfill").style.width=(qi/Q.length*100)+"%";
+  if(qi>=Q.length) return finishRun();
+  const q=Q[qi]; q.render(q);
+}
+function award(ok,xp=10){ if(ok){ run.correct++; run.gained+=xp; addXP(xp); } }
+function finishRun(){
+  $("#pfill").style.width="100%";
+  const acc=Math.round(run.correct/run.total*100);
+  if(run.onFinish) run.onFinish(acc);
+  $("#playBody").innerHTML=`<div class="card done"><div class="emoji">${acc>=80?"🏆":"🎉"}</div>
+    <h2>¡Lección completa!</h2><p class="sub">${run.title}</p>
+    <div class="bigstat"><div>⭐ ${run.gained}<small>XP ganados</small></div><div>🎯 ${acc}%<small>Precisión</small></div><div>🔥 ${P.streak}<small>Racha</small></div></div>
+    ${run.again?`<button class="btn blue full" id="again" style="margin-bottom:12px">♾️ Otra ronda</button>`:""}<button class="btn full" id="cont">Continuar</button></div>`;
+  $("#cont").onclick=()=>openTab(tab);
+  if(run.again){ const g=run.again; $("#again").onclick=g; }
+}
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ---------- Lección: escucha y elige + repite ---------- */
+function startLesson(i){
+  const les=LESSONS[i], U=UNITS[les.unit], q=[];
+  les.idx.forEach(pi=>{
+    const p=U.phrases[pi];
+    q.push({render:rChoose,p,pool:U.phrases});
+    q.push({render:rRepeat,p});
+  });
+  startRun(q,{title:`${U.name} · Lección ${les.n}`,onFinish:()=>{
+    const lv=LESSONS.filter(l=>l.level===les.level), was=lv.every(l=>P.done[l.key]);
+    P.done[les.key]=true; save();
+    if(!was&&lv.every(l=>P.done[l.key])) setTimeout(()=>levelParty(les.level),500); else setTimeout(confetti,300);
+  }});
+}
+
+function rChoose(q){
+  const [en,es]=q.p;
+  const wrong=shuffle(q.pool.filter(x=>x[1]!==es)).slice(0,2).map(x=>x[1]);
+  const opts=shuffle([es,...wrong]);
+  $("#playBody").innerHTML=`<div class="card" style="text-align:center">
+    <div class="step">Escucha y elige qué significa</div>
+    <div class="row" style="justify-content:center;margin:20px 0 6px;gap:14px;display:flex">
+      <button class="speaker huge" data-say="${esc(en)}">🔊</button>
+      <button class="speaker slow" data-say="${esc(en)}" data-rate="0.65" style="align-self:flex-end">🐢</button>
+    </div>
+    <div class="opts">${opts.map(o=>`<button class="opt" data-o="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  setTimeout(()=>speak(en),250);
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const ok=b.dataset.o===es;
+    document.querySelectorAll(".opt").forEach(x=>{ x.disabled=true; if(x.dataset.o===es) x.classList.add("good"); });
+    if(!ok) b.classList.add("bad");
+    award(ok);
+    $("#fb").innerHTML=`<div class="result ${ok?"good":"bad"}" style="text-align:left">
+      <div class="verdict">${ok?"✅ ¡Correcto! <span class='xpgain'>+10 XP</span>":"❌ Casi"}</div>
+      <div style="margin-top:6px"><b>${esc(en)}</b> = ${esc(es)}</div>
+      <button class="btn full ${ok?"":"blue"}" style="margin-top:12px" id="go">Continuar</button></div>`;
+    $("#go").onclick=()=>{qi++;nextQ();};
+  });
+}
+
+function rRepeat(q){
+  const [en,es,ph]=q.p;
+  $("#playBody").innerHTML=`<div class="card">
+     <div class="step">Ahora dilo tú</div>
+     <div class="en-big">${esc(en)}</div>
+     <div class="es-big">${esc(es)}</div>
+     ${ph?`<div class="phon"><small>Suena como:</small> ${esc(ph)}</div>`:""}
+     <div style="display:flex;gap:10px">
+       <button class="speaker" data-say="${esc(en)}">🔊</button>
+       <button class="speaker slow" data-say="${esc(en)}" data-rate="0.65">🐢</button>
+     </div>
+     <div class="micwrap"><div class="live-text" id="liveL"></div>
+       <button class="mic" id="micL" ${dict?"":"disabled"}>${MIC_SVG}</button>
+       <div class="mic-label" id="labelL">Toca y repite la frase</div></div>
+   </div>
+   <div id="res"></div>
+   <div style="text-align:center;margin-top:14px"><button class="btn white" id="skip">No puedo hablar ahora →</button></div>`;
+  const ctx={btn:$("#micL"),live:$("#liveL"),label:$("#labelL"),done:said=>checkSpeech(en,said,ctx,true)};
+  $("#micL").onclick=()=>micClick(ctx);
+  $("#skip").onclick=()=>{qi++;nextQ();};
+}
+
+/* ---------- Comparar lo dicho ---------- */
+const NUM={one:"1",two:"2",three:"3",four:"4",five:"5",six:"6",seven:"7",eight:"8",nine:"9",ten:"10",twenty:"20",thirty:"30",thousand:"1000"};
+const CONTR={"i'm":["i","am"],"im":["i","am"],"it's":["it","is"],"you're":["you","are"],"what's":["what","is"],"where's":["where","is"],"i'll":["i","will"],"she's":["she","is"],"that's":["that","is"]};
+const norm=s=>s.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9' ]/g," ").split(/\s+/).filter(Boolean).flatMap(w=>CONTR[w]||[w]);
+const eq=(a,b)=>a===b||NUM[a]===b||NUM[b]===a||a.replace(/'/g,"")===b.replace(/'/g,"");
+function diff(T,S){
+  const n=T.length,m=S.length,dp=Array.from({length:n+1},()=>Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--) dp[i][j]=eq(T[i],S[j])?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const ok=Array(n).fill(false),errs=[]; let i=0,j=0,gt=[],gs=[];
+  const flush=()=>{ if(gt.length) errs.push({want:gt.join(" "),said:gs.join(" ")}); gt=[]; gs=[]; };
+  while(i<n||j<m){
+    if(i<n&&j<m&&eq(T[i],S[j])){ flush(); ok[i]=true; i++; j++; }
+    else if(j>=m||(i<n&&dp[i+1][j]>=dp[i][j+1])){ gt.push(T[i]); i++; }
+    else { if(gt.length||i<n) gs.push(S[j]); j++; }
+  }
+  flush(); return {ok,errs};
+}
+
+async function checkSpeech(en,said,ctx,isLesson){
+  if(!said){ ctx.label.textContent="No te escuché 🙉 Acércate al micrófono y habla un poco más fuerte"; return; }
+  ctx.label.textContent="Toca para intentar otra vez";
+  const T=norm(en),{ok,errs}=diff(T,norm(said));
+  const pct=Math.round(100*ok.filter(Boolean).length/T.length);
+  const pass=pct>=75;
+  const cls=pct>=85?"good":pct>=50?"mid":"bad";
+  const verdict=pct===100?"🎉 ¡Perfecto!":pct>=85?"👏 ¡Muy bien!":pct>=50?"💪 Casi":"🔁 Otra vez";
+  const first=!ctx.scored; if(first){ ctx.scored=true; award(pass); }
+  const errHtml=errs.map(e=>e.said
+    ?`<div class="err"><span>Dijiste <span class="xx">${esc(e.said)}</span> → se dice <span class="v">${esc(e.want)}</span></span><button data-say="${esc(e.want)}" data-rate="0.7">🔊</button></div>`
+    :`<div class="err"><span>No se escuchó <span class="v">${esc(e.want)}</span></span><button data-say="${esc(e.want)}" data-rate="0.7">🔊</button></div>`).join("");
+  $("#res").innerHTML=`<div class="result ${cls}">
+    <div class="verdict">${verdict} ${first&&pass?"<span class='xpgain'>+10 XP</span>":""}<span style="margin-left:auto;font-size:20px">${pct}%</span></div>
+    <div class="words">${T.map((w,k)=>`<span class="w ${ok[k]?"ok":"no"}" ${ok[k]?"":`data-say="${esc(w)}" data-rate="0.7"`}>${esc(w)}</span>`).join("")}</div>
+    <div class="heard">Lo que entendí: “${esc(said)}”</div>
+    ${errs.length?`<div style="margin-top:10px;font-weight:900">Lo que hay que corregir:</div>${errHtml}`:""}
+    <div class="tip hidden" id="tipL"></div>
+    <div class="row" style="margin-top:14px">
+      ${pct<100?`<button class="btn white" id="retry">🔁 Otra vez</button>`:""}
+      <button class="btn ${pass?"":"blue"}" id="next">${pass?"Continuar ✓":"Seguir"}</button></div></div>`;
+  $("#next").onclick=()=>{qi++;nextQ();};
+  if($("#retry")) $("#retry").onclick=()=>{ $("#res").innerHTML=""; speak(en,0.7); };
+  $("#res").scrollIntoView({behavior:"smooth",block:"nearest"});
+  if(errs.length) speakLines(corrLines(errs,en)); else speakLines([{text:pct===100?"¡Perfecto!":"¡Muy bien!",lang:"es"}]);
+  if(errs.length&&ai){
+    const tip=$("#tipL"); tip.classList.remove("hidden"); tip.innerHTML='<span class="spin"></span> Pensando cómo ayudarte…';
+    try{
+      const r=await ai(`You help a total beginner (native Spanish speaker) with English pronunciation.
+Target: "${en}". Speech recognition heard: "${said}".
+Problems: ${errs.map(e=>e.said?`said "${e.said}" instead of "${e.want}"`:`"${e.want}" was not heard`).join("; ")}.
+Start with "Eso no se pronuncia así." Then answer in SIMPLE Spanish, max 3 short lines, friendly. For each problem word say which sound is probably wrong and exactly how to move mouth/tongue/lips. Include how it sounds written the Spanish way (e.g. "zénk"). Plain text, no markdown, no asterisks.`,{modelTier:"quick"});
+      const tx=r.text.trim(); tip.innerHTML=`<b>💡 Consejo de la IA <button class="say" data-es="${esc(tx)}">🔊 escuchar</button></b>`+esc(tx);
+    }catch(e){ tip.classList.add("hidden"); }
+  }
+}
+
+/* =========================================================
+   PALABRAS (estilo Drops)
+   ========================================================= */
+function renderWords(){
+  $("#wordCats").innerHTML=Object.entries(WORDS).map(([k,c])=>{
+    const learned=(P.words[k]||[]).length;
+    return `<button class="big" data-cat="${esc(k)}"><div class="ico" style="background:var(--soft-purple)">${c.ico}</div>
+      <div><b>${esc(k)}</b><small>${c.list.slice(0,4).map(w=>w[2]).join(" ")} …</small></div>
+      <div class="right">${learned}/${c.list.length} ✓</div></button>`;
+  }).join("");
+  document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>startWords(b.dataset.cat));
+}
+function startWords(cat){
+  const list=WORDS[cat].list, learned=P.words[cat]||[];
+  const pick=shuffle([...list.filter(w=>!learned.includes(w[0])),...list.filter(w=>learned.includes(w[0]))]).slice(0,5);
+  const q=[];
+  pick.forEach(w=>q.push({render:rWordIntro,w,cat}));
+  shuffle(pick).forEach(w=>q.push({render:rWordPick,w,list}));
+  shuffle(pick).forEach(w=>q.push({render:rWordSay,w,cat}));
+  startRun(q,{title:`Palabras · ${cat}`});
+}
+function rWordIntro(q){
+  const [en,es,em,ph]=q.w;
+  run.total--; // la presentación no cuenta para precisión
+  $("#playBody").innerHTML=`<div class="card" style="text-align:center">
+    <div class="step">Palabra nueva</div>
+    <div class="bigemoji" style="margin:14px 0">${em}</div>
+    <div class="en-big">${esc(en)}</div><div class="es-big">${esc(es)}</div>
+    <div class="phon"><small>Suena como:</small> ${esc(ph)}</div>
+    <div style="display:flex;gap:10px;justify-content:center"><button class="speaker" data-say="${esc(en)}">🔊</button><button class="speaker slow" data-say="${esc(en)}" data-rate="0.6">🐢</button></div>
+    <button class="btn full" style="margin-top:20px" id="go">Entendido</button></div>`;
+  setTimeout(()=>speak(en,0.8),250);
+  $("#go").onclick=()=>{qi++;nextQ();};
+}
+function rWordPick(q){
+  const [en,,em]=q.w;
+  const opts=shuffle([q.w,...shuffle(q.list.filter(x=>x[0]!==en&&x[2]!==em)).slice(0,3)]);
+  $("#playBody").innerHTML=`<div class="card" style="text-align:center">
+    <div class="step">Escucha y toca el dibujo</div>
+    <div style="margin:18px 0 0"><button class="speaker huge" data-say="${esc(en)}">🔊</button></div>
+    <div class="emojis">${opts.map(o=>`<button class="opt" data-w="${esc(o[0])}">${o[2]}</button>`).join("")}</div>
+    <div id="fb"></div></div>`;
+  setTimeout(()=>speak(en,0.8),250);
+  document.querySelectorAll(".emojis .opt").forEach(b=>b.onclick=()=>{
+    const ok=b.dataset.w===en;
+    document.querySelectorAll(".emojis .opt").forEach(x=>{ x.disabled=true; if(x.dataset.w===en) x.classList.add("good"); });
+    if(!ok) b.classList.add("bad");
+    award(ok,5);
+    $("#fb").innerHTML=`<div class="result ${ok?"good":"bad"}" style="text-align:left"><div class="verdict">${ok?"✅ ¡Sí! <span class='xpgain'>+5 XP</span>":"❌ Era este: "+em}</div>
+      <div><b>${esc(en)}</b> = ${esc(q.w[1])}</div><button class="btn full ${ok?"":"blue"}" style="margin-top:12px" id="go">Continuar</button></div>`;
+    $("#go").onclick=()=>{qi++;nextQ();};
+  });
+}
+function rWordSay(q){
+  const [en,es,em,ph]=q.w;
+  $("#playBody").innerHTML=`<div class="card" style="text-align:center">
+    <div class="step">¿Cómo se dice en inglés?</div>
+    <div class="bigemoji" style="margin:14px 0">${em}</div>
+    <div class="es-big">${esc(es)}</div>
+    <details style="color:var(--muted);margin-bottom:6px"><summary style="cursor:pointer;font-weight:800">Ver pista</summary><div class="en-big">${esc(en)}</div><div class="phon">${esc(ph)}</div></details>
+    <div class="micwrap"><div class="live-text" id="liveL"></div><button class="mic" id="micL" ${dict?"":"disabled"}>${MIC_SVG}</button><div class="mic-label" id="labelL">Toca y di la palabra</div></div>
+    <div id="res" style="text-align:left"></div>
+    <button class="btn white" style="margin-top:14px" id="skip">No puedo hablar ahora →</button></div>`;
+  const ctx={btn:$("#micL"),live:$("#liveL"),label:$("#labelL"),done:said=>{
+    if(!said){ ctx.label.textContent="No te escuché 🙉 Intenta otra vez"; return; }
+    const ok=norm(said).some(w=>eq(w,en)||w===en+"s"||w+"s"===en);
+    const first=!ctx.scored; if(first){ ctx.scored=true; award(ok,5); }
+    if(ok){ P.words[q.cat]=P.words[q.cat]||[]; if(!P.words[q.cat].includes(en)){P.words[q.cat].push(en); save();} }
+    ctx.label.textContent="Toca para intentar otra vez";
+    $("#res").innerHTML=`<div class="result ${ok?"good":"bad"}"><div class="verdict">${ok?"✅ ¡Perfecto!"+(first?" <span class='xpgain'>+5 XP</span>":""):"❌ No sonó igual"}</div>
+      ${ok?"":`<div class="err"><span>Dijiste <span class="xx">${esc(said)}</span> → se dice <span class="v">${esc(en)}</span> <small>(${esc(ph)})</small></span><button data-say="${esc(en)}" data-rate="0.65">🔊</button></div>`}
+      <div class="row" style="margin-top:12px">${ok?"":`<button class="btn white" id="retry">🔁 Otra vez</button>`}<button class="btn ${ok?"":"blue"}" id="next">Continuar</button></div></div>`;
+    $("#next").onclick=()=>{qi++;nextQ();};
+    if($("#retry")) $("#retry").onclick=()=>{ $("#res").innerHTML=""; speak(en,0.65); };
+    if(ok) speakLines([{text:"¡Perfecto!",lang:"es"}]);
+    else speakLines([{text:"Eso no se pronuncia así. Se dice",lang:"es"},{text:en,lang:"en",rate:0.65},{text:"Repite conmigo.",lang:"es"},{text:en,lang:"en",rate:0.75}]);
+  }};
+  $("#micL").onclick=()=>micClick(ctx);
+  $("#skip").onclick=()=>{qi++;nextQ();};
+}
+
+/* =========================================================
+   AMIGOS + LABORATORIOS (conversación por voz)
+   ========================================================= */
+const CHAT_LV={
+ A1:"a TOTAL BEGINNER (A1). Use very simple English, max 2 SHORT sentences (5-10 words each), common words only.",
+ A2:"an elementary learner (A2). Use simple English, max 2 sentences, everyday vocabulary, simple past and future are OK.",
+ B1:"an intermediate learner (B1). Use natural but clear English, 2-3 sentences, some common expressions.",
+ B2:"an upper-intermediate learner (B2). Speak naturally like a native in casual conversation, 2-3 sentences, use phrasal verbs and some idioms, ask follow-up questions that require opinions.",
+ C1:"an advanced learner (C1). Speak like a fluent native: natural, idioms, nuance, humor, complex ideas. Challenge him with deeper questions. Correct even small unnatural phrasing."};
+function renderFriends(){
+  const sel=$("#chatLevel"); sel.value=P.chatLevel||"A1"; sel.onchange=()=>{P.chatLevel=sel.value; save(); if(!ai) renderFriends();};
+  if(!ai){
+    const li=LV_CODES.indexOf(sel.value);
+    $("#friendList").innerHTML=`<div class="notice" style="display:block">💬 Las conversaciones libres con IA no están activas. Mientras tanto, practica con estas <b>conversaciones guiadas</b> de tu nivel (funcionan sin internet):</div>`+
+      LABS[li].map((lab,j)=>{ const b=(P.labs||{})[lab.id]; return `<button class="big" data-lab="${li}-${j}"><div class="ico" style="background:var(--soft-purple);border-radius:50%">${lab.av}</div><div><b>${esc(lab.who)} · ${esc(lab.title)}</b><small>${esc(lab.mission)}</small></div><div class="right">${b!=null?"🏆 "+b:"Nuevo"}</div></button>`; }).join("");
+    document.querySelectorAll("#friendList [data-lab]").forEach(b=>b.onclick=()=>{ const [a,c]=b.dataset.lab.split("-").map(Number); openLab(a,c); });
+    return;
+  }
+  $("#friendList").innerHTML=FRIENDS.map((f,i)=>`<button class="big" data-f="${i}">
+    <div class="ico" style="background:${f.bg};border-radius:50%">${f.av}</div>
+    <div><b>${esc(f.name)}</b><small>${esc(f.desc)}</small></div><div class="right" style="color:var(--green-d)">● </div></button>`).join("");
+  document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{ const f=FRIENDS[+b.dataset.f];
+    openChat({name:f.name,av:f.av,bg:f.bg,voice:f.voice,persona:f.persona,hello:f.hello,level:P.chatLevel||"A1",lab:null}); });
+}
+function openLab(li,j){
+  if(!ai) return openScriptLab(li,j);
+  const L=LABS[li][j];
+  openChat({name:L.who,av:L.av,bg:"var(--soft-purple)",voice:L.voice,persona:L.persona,hello:"Start the role-play. "+L.start,level:LV_CODES[li],lab:Object.assign({li,done:[],announced:false},L)});
+}
+let CH=null,history=[],busy=false,turns=0;
+const chat=$("#chat");
+const cctx={btn:$("#micChat"),live:$("#liveChat"),label:$("#chatLabel"),done:onChatSaid};
+$("#micChat").onclick=()=>micClick(cctx);
+function updMic(){ $("#micChat").disabled=!dict||busy||!history.length; }
+function alertBox(t){ $("#notice").innerHTML=t; $("#notice").style.display="block"; }
+
+function openChat(c){
+  if(!ai){ alertBox("La conversación con IA no está disponible en esta vista."); return; }
+  CH=c; history=[]; turns=0; chat.innerHTML="";
+  $("#cAv").textContent=c.av; $("#cAv").style.background=c.bg;
+  $("#cName").textContent=c.lab?c.lab.title:c.name;
+  $("#cSub").textContent=c.lab?`🧪 Laboratorio ${c.level} · con ${c.name} (IA)`:`● en línea · personaje de IA · ${c.level}`;
+  renderLabPanel(); show("chatView"); askChat(c.hello);
+}
+function renderLabPanel(){
+  const p=$("#labPanel");
+  if(!CH||!CH.lab){ p.classList.add("hidden"); return; }
+  const L=CH.lab; p.classList.remove("hidden");
+  p.innerHTML=`<div class="lbl">🎯 Tu misión</div><div style="font-size:15px;margin-bottom:6px">${esc(L.mission)}</div>`+
+    L.goals.map((g,i)=>`<div class="goalrow ${L.done.includes(i+1)?"ok":""}">${L.done.includes(i+1)?"✅":"⬜"} ${esc(g)}</div>`).join("")+
+    `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px"><span style="font-size:14px;color:var(--muted);font-weight:800">💬 ${turns} respuestas · ${L.done.length}/${L.goals.length} metas</span>
+     <button class="btn blue" id="finishLab" style="padding:9px 12px;font-size:15px">Terminar y evaluar</button></div>`;
+  $("#finishLab").onclick=finishLab;
+}
+
+function chatPrompt(extra){
+  const lab=CH.lab;
+  return `You are ${CH.persona}
+You are talking by voice with Angel, a native Spanish speaker who is ${CHAT_LV[CH.level]} Stay in character, be warm and natural.
+${lab?`This is a ROLE-PLAY LAB. Scenario: ${lab.scenario}
+Angel's goals (written in Spanish), numbered: ${lab.goals.map((g,i)=>(i+1)+") "+g).join(" ; ")}
+Guide the conversation naturally so he gets chances to achieve every goal, without listing the goals. Make it a LONG, continuous conversation: keep adding small new developments, questions and surprises. Never end the conversation yourself, even after all goals are done.
+`:""}Rules:
+- "reply": follow the level above, end with ONE question or prompt so he keeps talking. Spoken aloud. No emojis.
+- "reply_es": Spanish translation of reply.
+- Angel's words come from speech recognition: ignore punctuation/capitals. If a word seems wrong but sounds like the right one, it is a PRONUNCIATION mistake: report it with type "pron".
+- "mistakes": EVERY real mistake in what Angel just said, max 3: {"said":"his words","correct":"correct English","type":"pron" or "grammar" or "word","why":"very short explanation in simple Spanish; for pron say how to move the mouth"}. Empty if correct or at the start.
+- "praise": short encouragement in Spanish if he did well, else empty.
+- "suggest": an example answer at his level that Angel could say to YOUR question: {"en":"...","es":"..."}.
+- "goals_done": ${lab?"numbers of ALL goals Angel has achieved so far in the whole conversation (cumulative)":"always []"}.
+Return ONLY JSON: {"reply":"","reply_es":"","mistakes":[],"praise":"","suggest":{"en":"","es":""},"goals_done":[]}
+
+Conversation so far:
+${history.map(h=>(h.r==="t"?CH.name+": ":"Angel: ")+h.text).join("\n")||"(none)"}
+
+${extra}`;
+}
+
+async function askChat(extra){
+  busy=true; updMic(); cctx.label.textContent=CH.name+" está escribiendo…";
+  const typing=addMsg("t",'<span class="spin"></span>');
+  try{
+    const r=await ai.json(chatPrompt(extra),{cache:false,modelTier:"quick"});
+    typing.remove();
+    const lines=[];
+    const lastMe=[...chat.querySelectorAll(".msg.m")].pop();
+    const ms=(r.mistakes||[]).filter(m=>m&&m.correct);
+    if(lastMe&&!lastMe.querySelector(".fixbox")){
+      const box=document.createElement("div");
+      if(ms.length){
+        box.className="fixbox";
+        box.innerHTML="<b>✏️ Corrección</b>"+ms.map(m=>`<div style="margin-top:6px">${m.type==="pron"?"🗣️ ":""}<span style="text-decoration:line-through;color:var(--red-d)">${esc(m.said)}</span> → <b style="color:var(--green-d)">${esc(m.correct)}</b><button class="say" data-say="${esc(m.correct)}" data-rate="0.7">🔊</button><div class="es">${esc(m.why)}</div></div>`).join("");
+        lines.push(...chatCorrLines(ms));
+      } else { box.className="fixbox ok"; box.innerHTML="✅ "+esc(r.praise||"¡Bien dicho!")+" <span class='xpgain'>+5 XP</span>"; addXP(5); }
+      lastMe.appendChild(box);
+    }
+    const reply=r.reply||"";
+    history.push({r:"t",text:reply});
+    addMsg("t",`<div class="who">${CH.av} ${esc(CH.name)}</div><div class="en">${esc(reply)} <button class="say" data-say="${esc(reply)}" data-voice="${CH.voice}">🔊</button><button class="say" data-say="${esc(reply)}" data-rate="0.65" data-voice="${CH.voice}">🐢</button></div><div class="es">${esc(r.reply_es||"")}</div>`);
+    if(CH.lab&&Array.isArray(r.goals_done)){
+      r.goals_done.forEach(n=>{ n=+n; if(n>=1&&n<=CH.lab.goals.length&&!CH.lab.done.includes(n)) CH.lab.done.push(n); });
+      renderLabPanel();
+      if(!CH.lab.announced&&CH.lab.done.length===CH.lab.goals.length){
+        CH.lab.announced=true;
+        addMsg("suggest",`<div class="lbl">🎉 ¡Misión cumplida!</div><div class="es" style="color:var(--ink)">Puedes seguir hablando para practicar más, o toca <b>Terminar y evaluar</b>.</div>`);
+      }
+    }
+    if(r.suggest&&r.suggest.en) addMsg("suggest",`<div class="lbl">Puedes responder algo como:</div><div class="en" style="font-size:18px;font-weight:800">${esc(r.suggest.en)} <button class="say" data-say="${esc(r.suggest.en)}" data-rate="0.75">🔊</button></div><div class="es">${esc(r.suggest.es)}</div>`);
+    busy=false; updMic(); cctx.label.textContent="Toca para responder";
+    lines.push({text:reply,lang:"en",rate:0.85,voice:CH.voice});
+    await speakLines(lines);
+  }catch(e){
+    typing.remove();
+    addMsg("t",`<div class="es">${e&&e.code==="rate_limited"?"Espera unos segundos e intenta otra vez.":"No pude responder 😕 Intenta otra vez."}</div>`);
+    busy=false; updMic(); cctx.label.textContent="Toca para responder";
+  }
+}
+function chatCorrLines(ms){
+  const pron=ms.find(m=>m.type==="pron");
+  const L=[{text:pron?"Ojo, eso no se pronuncia así.":"Ojo, una corrección.",lang:"es"}];
+  ms.slice(0,2).forEach(m=>{
+    if(m.said) L.push({text:"No se dice",lang:"es"},{text:m.said,lang:"en"});
+    L.push({text:"Se dice",lang:"es"},{text:m.correct,lang:"en",rate:0.7});
+  });
+  L.push({text:"Ahora sigamos.",lang:"es"});
+  return L;
+}
+function onChatSaid(said){
+  cctx.live.textContent="";
+  if(!said){ cctx.label.textContent="No te escuché 🙉 Intenta otra vez"; return; }
+  if(CH&&CH.scripted) return scriptHeard(said);
+  chat.querySelectorAll(".suggest").forEach(s=>s.remove());
+  history.push({r:"m",text:said}); turns++;
+  addMsg("m",`<div class="who">Tú</div><div class="en">${esc(said)}</div>`);
+  renderLabPanel();
+  askChat(`Angel just said: "${said}". Reply as JSON.`);
+}
+function addMsg(cls,html){
+  const d=document.createElement("div"); d.className=cls==="suggest"?"suggest":"msg "+cls; d.innerHTML=html;
+  chat.appendChild(d); d.scrollIntoView({behavior:"smooth",block:"end"}); return d;
+}
+
+async function finishLab(){
+  if(CH&&CH.scripted) return scriptFinish();
+  if(busy||!CH.lab) return;
+  if(history.filter(h=>h.r==="m").length<2){
+    addMsg("suggest",`<div class="lbl">Habla un poco más</div><div class="es" style="color:var(--ink)">Responde por lo menos 2 veces para poder evaluarte.</div>`); return;
+  }
+  busy=true; updMic();
+  const L=CH.lab, box=addMsg("t",'<span class="spin"></span> Preparando tu evaluación…');
+  try{
+    const r=await ai.json(`You are an English teacher evaluating a spoken role-play by Angel, a native Spanish speaker at CEFR level ${CH.level}. His lines come from speech recognition, so words that seem wrong but sound similar are pronunciation errors.
+Scenario: ${L.scenario}
+Goals (Spanish): ${L.goals.map((g,i)=>(i+1)+") "+g).join(" ; ")}
+Transcript:
+${history.map(h=>(h.r==="t"?CH.name+": ":"Angel: ")+h.text).join("\n")}
+Be honest but encouraging. Return ONLY JSON:
+{"score":0-100,"pronunciation":0-100,"grammar":0-100,"fluency":0-100,"goals_done":[goal numbers achieved],"good":["2 short things he did well, in Spanish"],"mistakes":[{"said":"","correct":"","why":"short Spanish explanation"}],"words":[{"en":"useful word or phrase for this scenario","es":""}],"advice":"one concrete tip in Spanish for next time"}
+Max 5 mistakes, exactly 5 words.`,{modelTier:"default",cache:false});
+    box.remove();
+    const sc=Math.max(0,Math.min(100,Math.round(+r.score||0)));
+    P.labs=P.labs||{}; P.labs[L.id]=Math.max(P.labs[L.id]||0,sc); save(); addXP(30);
+    const bar=(lbl,v)=>`<div style="margin-top:6px"><div style="display:flex;justify-content:space-between;font-weight:800;font-size:14px"><span>${lbl}</span><span>${Math.round(+v||0)}</span></div><div class="pbar"><div style="width:${Math.round(+v||0)}%"></div></div></div>`;
+    addMsg("t report",`<div style="text-align:center"><div style="font-size:56px">${sc>=80?"🏆":sc>=60?"🎉":"💪"}</div><div style="font-weight:900;font-size:22px">Resultado: ${sc}/100</div><div class="xpgain">+30 XP</div></div>
+      ${bar("🗣️ Pronunciación",r.pronunciation)}${bar("📐 Gramática",r.grammar)}${bar("🌊 Fluidez",r.fluency)}
+      ${(r.good||[]).length?`<div style="margin-top:12px;font-weight:900">✅ Lo que hiciste bien</div>${r.good.map(g=>`<div class="es" style="color:var(--ink)">• ${esc(g)}</div>`).join("")}`:""}
+      ${(r.mistakes||[]).length?`<div style="margin-top:12px;font-weight:900">✏️ A corregir</div>${r.mistakes.map(m=>`<div style="margin-top:6px"><span style="text-decoration:line-through;color:var(--red-d)">${esc(m.said)}</span> → <b style="color:var(--green-d)">${esc(m.correct)}</b><button class="say" data-say="${esc(m.correct)}" data-rate="0.7">🔊</button><div class="es">${esc(m.why)}</div></div>`).join("")}`:""}
+      ${(r.words||[]).length?`<div style="margin-top:12px;font-weight:900">📚 Palabras para aprender</div>${r.words.map(w=>`<div style="margin-top:4px"><b>${esc(w.en)}</b> <button class="say" data-say="${esc(w.en)}" data-rate="0.75">🔊</button> <span class="es">— ${esc(w.es)}</span></div>`).join("")}`:""}
+      ${r.advice?`<div class="tip" style="background:var(--soft-yellow)"><b>💡 Para la próxima</b>${esc(r.advice)}</div>`:""}
+      <button class="btn full" style="margin-top:14px" id="labAgain">🔁 Repetir laboratorio</button>`);
+    $("#labAgain").onclick=()=>openLab(L.li,LABS[L.li].findIndex(x=>x.id===L.id));
+    speakLines([{text:`Terminaste el laboratorio. Tu resultado es ${sc} de 100.`,lang:"es"}]);
+    if(sc>=70) confetti();
+  }catch(e){ box.innerHTML="No pude evaluarte 😕 Intenta otra vez."; }
+  busy=false; updMic();
+}
+
+/* =========================================================
+   PRÁCTICA INFINITA (generador de ~50,000 frases, sin IA)
+   ========================================================= */
+function startInfinite(li){
+  const seen=new Set(P.genSeen||[]);
+  const {phrases,keys}=GEN.pick(li,5,seen);
+  P.genSeen=[...(P.genSeen||[]),...keys].slice(-5000); save();
+  const pool=[...phrases,...LEVELS[li].units.flatMap(u=>UNITS[u].phrases)];
+  const q=[]; phrases.forEach(p=>{ q.push({render:rChoose,p,pool}); q.push({render:rRepeat,p}); });
+  startRun(q,{title:`Práctica infinita ${LV_CODES[li]}`,again:()=>startInfinite(li)});
+}
+
+/* =========================================================
+   LABORATORIOS SIN IA (con las conversaciones escritas)
+   ========================================================= */
+let SC=null;
+function openScriptLab(li,j){
+  const L=LABS[li][j];
+  CH={name:L.who,av:L.av,bg:"var(--soft-purple)",voice:L.voice,level:LV_CODES[li],scripted:true,lab:Object.assign({li,done:[],announced:false},L)};
+  history=[]; turns=0; chat.innerHTML="";
+  $("#cAv").textContent=L.av; $("#cAv").style.background=CH.bg;
+  $("#cName").textContent=L.title;
+  $("#cSub").textContent=`🧪 Laboratorio ${CH.level} · con ${L.who}`;
+  SC={script:SCRIPTS[L.id]||[],ti:0,scores:[],mist:[],tries:0};
+  renderLabPanel(); show("chatView"); scriptTurn();
+}
+function scriptTurn(){
+  const t=SC.script[SC.ti];
+  if(!t){ finishLab(); return; }
+  SC.tries=0;
+  history.push({r:"t",text:t[0]});
+  addMsg("t",`<div class="who">${CH.av} ${esc(CH.name)}</div><div class="en">${esc(t[0])} <button class="say" data-say="${esc(t[0])}" data-voice="${CH.voice}">🔊</button><button class="say" data-say="${esc(t[0])}" data-rate="0.65" data-voice="${CH.voice}">🐢</button></div><details class="es"><summary style="cursor:pointer">Ver en español</summary>${esc(t[1])}</details>`);
+  addMsg("suggest",`<div class="lbl">Puedes responder algo como:</div>`+t[2].map(o=>`<div style="margin-top:6px"><span class="en" style="font-size:17px;font-weight:800">${esc(o[0])}</span> <button class="say" data-say="${esc(o[0])}" data-rate="0.75">🔊</button><div class="es">${esc(o[1])}</div></div>`).join("")+
+    `<div class="es" style="margin-top:8px">💡 Puedes cambiar los detalles (nombres, días, números) por los tuyos.</div>`);
+  busy=false; updMic(); cctx.label.textContent="Toca para responder";
+  speakLines([{text:t[0],lang:"en",rate:0.85,voice:CH.voice}]);
+}
+function scriptHeard(said){
+  const t=SC.script[SC.ti]; if(!t) return;
+  chat.querySelectorAll(".suggest").forEach(s=>s.remove());
+  const me=addMsg("m",`<div class="who">Tú</div><div class="en">${esc(said)}</div>`);
+  const S=norm(said); let best=null;
+  for(const o of t[2]){ const T=norm(o[0]), d=diff(T,S), pct=d.ok.filter(Boolean).length/T.length; if(!best||pct>best.pct) best={o,pct,errs:d.errs}; }
+  const box=document.createElement("div");
+  if(best.pct>=0.5){
+    SC.scores.push(best.pct); turns++; history.push({r:"m",text:said});
+    if(t[3]&&!CH.lab.done.includes(t[3])) CH.lab.done.push(t[3]);
+    const fixes=best.errs.filter(e=>e.said);
+    let lines;
+    if(best.pct>=0.95||!fixes.length){
+      box.className="fixbox ok"; box.innerHTML="✅ ¡Bien dicho! <span class='xpgain'>+5 XP</span>"; addXP(5);
+      lines=[];
+    } else {
+      SC.mist.push(...fixes.map(e=>({said:e.said,correct:e.want})));
+      box.className="fixbox";
+      box.innerHTML="<b>✏️ Se entendió, pero ojo:</b>"+fixes.slice(0,3).map(e=>`<div style="margin-top:6px"><span style="text-decoration:line-through;color:var(--red-d)">${esc(e.said)}</span> → <b style="color:var(--green-d)">${esc(e.want)}</b><button class="say" data-say="${esc(e.want)}" data-rate="0.7">🔊</button></div>`).join("")+
+        `<div class="es" style="margin-top:6px">Así se dice completo: <b>${esc(best.o[0])}</b></div>`;
+      lines=corrLines(fixes,null);
+    }
+    me.appendChild(box);
+    renderLabPanel();
+    if(!CH.lab.announced&&CH.lab.done.length===CH.lab.goals.length){ CH.lab.announced=true; confetti(); }
+    SC.ti++;
+    busy=true; updMic();
+    speakLines(lines.length?lines:[{text:"¡Bien!",lang:"es"}]).then(()=>setTimeout(scriptTurn,300));
+  } else {
+    SC.tries++;
+    box.className="fixbox";
+    box.innerHTML=`<b>🤔 No te entendí bien.</b><div class="es" style="margin-top:4px">Intenta decir algo como:</div><div style="margin-top:4px"><b style="color:var(--green-d)">${esc(best.o[0])}</b> <button class="say" data-say="${esc(best.o[0])}" data-rate="0.7">🔊</button></div>`+
+      (SC.tries>=2?`<button class="btn white" style="margin-top:10px;padding:8px 12px;font-size:15px" id="scSkip">Seguir con la conversación →</button>`:"");
+    me.appendChild(box);
+    if(SC.tries>=2) box.querySelector("#scSkip").onclick=()=>{ box.querySelector("#scSkip").remove(); SC.scores.push(0); SC.ti++; scriptTurn(); };
+    // volver a mostrar las sugerencias
+    addMsg("suggest",`<div class="lbl">Inténtalo otra vez:</div>`+t[2].map(o=>`<div style="margin-top:6px"><span class="en" style="font-size:17px;font-weight:800">${esc(o[0])}</span> <button class="say" data-say="${esc(o[0])}" data-rate="0.75">🔊</button></div>`).join(""));
+    speakLines([{text:"No te entendí bien. Intenta decir:",lang:"es"},{text:best.o[0],lang:"en",rate:0.7}]);
+  }
+}
+function scriptFinish(){
+  const L=CH.lab, n=SC.scores.length;
+  if(n<2){ addMsg("suggest",`<div class="lbl">Habla un poco más</div><div class="es" style="color:var(--ink)">Responde por lo menos 2 veces para poder evaluarte.</div>`); return; }
+  const avg=SC.scores.reduce((a,b)=>a+b,0)/n;
+  const prog=Math.min(1,SC.ti/SC.script.length), goals=L.done.length/L.goals.length;
+  const sc=Math.round(100*(avg*0.6+prog*0.2+goals*0.2));
+  P.labs=P.labs||{}; P.labs[L.id]=Math.max(P.labs[L.id]||0,sc); save(); addXP(30);
+  const bar=(lbl,v)=>`<div style="margin-top:6px"><div style="display:flex;justify-content:space-between;font-weight:800;font-size:14px"><span>${lbl}</span><span>${Math.round(v)}</span></div><div class="pbar"><div style="width:${Math.round(v)}%"></div></div></div>`;
+  const uniq=[]; SC.mist.forEach(m=>{ if(!uniq.some(u=>u.correct===m.correct)) uniq.push(m); });
+  const key=SC.script.filter(t=>t[3]).slice(0,5).map(t=>t[2][0]);
+  addMsg("t report",`<div style="text-align:center"><div style="font-size:56px">${sc>=80?"🏆":sc>=60?"🎉":"💪"}</div><div style="font-weight:900;font-size:22px">Resultado: ${sc}/100</div><div class="xpgain">+30 XP</div></div>
+    ${bar("🗣️ Pronunciación (palabras entendidas)",avg*100)}${bar("💬 Conversación completada",prog*100)}${bar("🎯 Metas cumplidas",goals*100)}
+    ${uniq.length?`<div style="margin-top:12px;font-weight:900">✏️ Palabras para practicar</div>${uniq.slice(0,6).map(m=>`<div style="margin-top:6px"><span style="text-decoration:line-through;color:var(--red-d)">${esc(m.said)}</span> → <b style="color:var(--green-d)">${esc(m.correct)}</b><button class="say" data-say="${esc(m.correct)}" data-rate="0.7">🔊</button></div>`).join("")}`:`<div style="margin-top:12px;font-weight:900">✅ ¡Sin errores de pronunciación!</div>`}
+    <div style="margin-top:12px;font-weight:900">📚 Frases clave de esta conversación</div>${key.map(k=>`<div style="margin-top:4px"><b>${esc(k[0])}</b> <button class="say" data-say="${esc(k[0])}" data-rate="0.75">🔊</button><div class="es">${esc(k[1])}</div></div>`).join("")}
+    <button class="btn full" style="margin-top:14px" id="labAgain">🔁 Repetir laboratorio</button>`);
+  $("#labAgain").onclick=()=>openScriptLab(L.li,LABS[L.li].findIndex(x=>x.id===L.id));
+  speakLines([{text:`Terminaste el laboratorio. Tu resultado es ${sc} de 100.`,lang:"es"}]);
+  if(sc>=70) confetti();
+  SC.ti=SC.script.length; busy=true; updMic();
+}
+
+/* =========================================================
+   CELEBRACIONES
+   ========================================================= */
+const CONF_COLORS=["#22b573","#3b82f6","#ffc531","#f0544f","#8b5cf6","#ff8a3d"];
+function confBits(n){ let h=""; for(let i=0;i<n;i++) h+=`<i class="conf" style="left:${Math.random()*100}%;background:${CONF_COLORS[i%6]};animation-delay:${(Math.random()*1.5).toFixed(2)}s;animation-duration:${(2.5+Math.random()*2.5).toFixed(2)}s;width:${6+Math.random()*8|0}px"></i>`; return h; }
+function confetti(){
+  const o=document.createElement("div"); o.className="party light"; o.innerHTML=confBits(70);
+  document.body.appendChild(o); setTimeout(()=>o.remove(),5500);
+}
+function levelParty(li){
+  const code=LV_CODES[li], next=LEVELS[li+1];
+  const B=["🎈","🎈","🎉","🎈","🎊","⭐","🎈","🥳"];
+  let h=""; for(let i=0;i<28;i++) h+=`<span class="balloon" style="left:${Math.random()*94}%;animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(4+Math.random()*3).toFixed(2)}s;font-size:${36+Math.random()*34|0}px">${B[i%B.length]}</span>`;
+  addXP(100);
+  const o=document.createElement("div"); o.className="party";
+  o.innerHTML=h+confBits(90)+`<div class="party-card"><div class="badge">${["🥉","🥈","🥇","🏆","👑"][li]}</div>
+    <h2>¡Pasaste el nivel ${code}!</h2>
+    <p class="sub">${next?`Terminaste todas las lecciones de <b>${LEVELS[li].name}</b>. Ya puedes con el <b>${next.name}</b>. ¡Sigue así!`:"¡Terminaste TODO el curso! Ya hablas inglés de nivel avanzado. 👏"}</p>
+    <div class="bigstat"><div>⭐ ${P.xp}<small>XP total</small></div><div>🔥 ${P.streak}<small>Racha</small></div></div>
+    <button class="btn full" id="partyOk">${next?"¡Vamos al "+next.name.split(" · ")[0]+"! 🚀":"¡Lo logré! 🎉"}</button></div>`;
+  document.body.appendChild(o);
+  speakLines([{text:`¡Felicidades! Pasaste el nivel ${code}.`,lang:"es"},{text:"Congratulations! You did it!",lang:"en"}]);
+  o.querySelector("#partyOk").onclick=()=>{ o.remove(); P.levelsDone=P.levelsDone||{}; P.levelsDone[li]=true; save(); openTab("path"); if(next) setTimeout(()=>{ const el=$("#lv"+(li+1)); if(el) el.scrollIntoView({behavior:"smooth"}); },150); };
+}
+
+function esc(s){ return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+openTab("path");
+setupCaps();
+$("#setBtn").onclick=openSettings;
+</script>
+</body>
+</html>
